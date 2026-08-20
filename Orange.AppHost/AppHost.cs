@@ -24,12 +24,17 @@ public class Program
             .WithReference(postgresdb)
             .WaitFor(postgresdb);
 
-        var blazorApp = builder.AddBlazorWasmProject<Projects.Orange_Blazor>("blazor")
+        var blazorApp = builder.AddBlazorWasmProject<Projects.Orange_Blazor>("web-dashboard")
             .WithReference(api)
             .WithReference(seq);
 
         var gateway = builder.AddBlazorGateway("gateway")
             .WithExternalHttpEndpoints();
+        
+        var bot = builder.AddProject<Projects.Orange_Bot>("discord-bot")
+            .WithReference(seq)
+            .WithReference(api.GetEndpoint("http"))
+            .WaitFor(api);
 
         gateway.WithBlazorClientApp(blazorApp);
         

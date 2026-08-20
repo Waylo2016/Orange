@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orange.Blazor", "Orange.Bla
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orange.Api", "Orange.Api\Orange.Api.csproj", "{5DEC56A3-0E5D-4E9E-A22B-5D93EF6CDA4E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orange.Bot", "Orange.Bot\Orange.Bot.csproj", "{4D82D84C-9261-40A7-B1A7-C227CCCE4ED1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,18 @@ Global
 		{5DEC56A3-0E5D-4E9E-A22B-5D93EF6CDA4E}.Release|x64.Build.0 = Release|Any CPU
 		{5DEC56A3-0E5D-4E9E-A22B-5D93EF6CDA4E}.Release|x86.ActiveCfg = Release|Any CPU
 		{5DEC56A3-0E5D-4E9E-A22B-5D93EF6CDA4E}.Release|x86.Build.0 = Release|Any CPU
+		{4D82D84C-9261-40A7-B1A7-C227CCCE4ED1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D82D84C-9261-40A7-B1A7-C227CCCE4ED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D82D84C-9261-40A7-B1A7-C227CCCE4ED1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4D82D84C-9261-40A7-B1A7-C227CCCE4ED1}.Debug|x64.Build.0 = Debug|Any CPU
+		{4D82D84C-9261-40A7-B1A7-C227CCCE4ED1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4D82D84C-9261-40A7-B1A7-C227CCCE4ED1}.Debug|x86.Build.0 = Debug|Any CPU
+		{4D82D84C-9261-40A7-B1A7-C227CCCE4ED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D82D84C-9261-40A7-B1A7-C227CCCE4ED1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D82D84C-9261-40A7-B1A7-C227CCCE4ED1}.Release|x64.ActiveCfg = Release|Any CPU
+		{4D82D84C-9261-40A7-B1A7-C227CCCE4ED1}.Release|x64.Build.0 = Release|Any CPU
+		{4D82D84C-9261-40A7-B1A7-C227CCCE4ED1}.Release|x86.ActiveCfg = Release|Any CPU
+		{4D82D84C-9261-40A7-B1A7-C227CCCE4ED1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

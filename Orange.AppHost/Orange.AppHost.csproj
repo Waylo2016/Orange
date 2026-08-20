@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Orange.Blazor\Orange.Blazor.csproj" />
     <ProjectReference Include="..\Orange.Api\Orange.Api.csproj" />
+    <ProjectReference Include="..\Orange.Bot\Orange.Bot.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
