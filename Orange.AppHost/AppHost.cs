@@ -15,6 +15,7 @@ public class Program
 
         var discordApiKey = builder.AddParameter("DiscordApiKey", secret: true);
         var discordClientId = builder.AddParameter("DiscordClientId", secret: true);
+        var discordDevGuildId = builder.AddParameter("DevGuildId", secret: true);
 
         var seq = builder.AddSeq("seq")
             .ExcludeFromManifest()
@@ -54,6 +55,7 @@ public class Program
         var bot = builder.AddProject<Projects.Orange_Bot>("discord-bot")
             .WithEnvironment("Discord__Api__Key", discordApiKey)
             .WithEnvironment("Discord__Client__Id", discordClientId)
+            .WithEnvironment("Discord__DevGuildId", discordDevGuildId)
             .WithReference(seq)
             .WithReference(api.GetEndpoint("http"))
             .WaitFor(api);
