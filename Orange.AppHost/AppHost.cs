@@ -21,6 +21,7 @@ public class Program
             .WithContainerName("seq")
             .WithContainerRuntimeArgs("--label", stackLabel)
             .WithLifetime(ContainerLifetime.Persistent)
+            .WithHttpEndpoint(port: 5341, targetPort: 80, name: "http")
             .WithEnvironment("ACCEPT_EULA", "Y");
 
         var postgres = builder.AddPostgres("postgres")
@@ -41,7 +42,7 @@ public class Program
             .WithReference(postgresdb)
             .WaitFor(postgresdb);
 
-        var apiMigrations = api.AddEFMigrations("api-migrations");
+        // var apiMigrations = api.AddEFMigrations("api-migrations");
 
         var blazorApp = builder.AddBlazorWasmProject<Projects.Orange_Blazor>("web-dashboard")
             .WithReference(api)
