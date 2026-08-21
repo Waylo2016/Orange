@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <ImplicitUsings>disable</ImplicitUsings>
     <UserSecretsId>dotnet-Orange.Bot-32e4ca96-de7a-4abf-934b-950845af282d</UserSecretsId>
   </PropertyGroup>
 
