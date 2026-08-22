@@ -4,6 +4,8 @@ using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Orange.Bot.Interfaces;
+using Orange.Bot.Services;
 
 namespace Orange.Bot;
 
@@ -20,11 +22,18 @@ public class Program
 
         builder.Services.AddSingleton(new DiscordSocketClient( new DiscordSocketConfig()
             {
-                GatewayIntents = GatewayIntents.Guilds | GatewayIntents.DirectMessages | GatewayIntents.MessageContent
+                GatewayIntents =   GatewayIntents.Guilds 
+                                 | GatewayIntents.DirectMessages 
+                                 | GatewayIntents.MessageContent 
+                                 | GatewayIntents.GuildMembers 
+                                 | GatewayIntents.GuildMessages
             }));
         
+        //singletons for the interaction service
         builder.Services.AddSingleton(sp => 
             new InteractionService(sp.GetRequiredService<DiscordSocketClient>()));
+        builder.Services.AddSingleton<IMessageWaiter, MessageWaiter>();
+
         builder.Services.AddHostedService<Worker>();
         builder.Services.AddHostedService<SlashCommandRegistrar>();
         

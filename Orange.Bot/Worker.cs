@@ -22,13 +22,14 @@ public class Worker : BackgroundService
         ILogger<Worker> logger, 
         IConfiguration config, 
         InteractionService interactionService, 
-        IServiceProvider services)
+        IServiceProvider services,
+        DiscordSocketClient client)
     {
         _logger = logger;
         _config = config;
         _InteractionService = interactionService;
         _services = services;
-        _client = new DiscordSocketClient();
+        _client = client;
         
         _client.Log += LogAsync;
     }
