@@ -19,13 +19,24 @@ public class SendMessageModule(ILogger<SendMessageModule> logger, IMessageWaiter
         await DeferAsync(ephemeral: true);
         try
         {
-            IDMChannel? channel = await Context.User.CreateDMChannelAsync();
-            await channel.SendMessageAsync("Your Mom!");
+            IDMChannel? channel = null;
+            
+            try
+            {
+                channel = await Context.User.CreateDMChannelAsync();
+                await channel.SendMessageAsync("Your Mom!");
+                
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "[{Source}] Failed to send DM to {User}", "Bot", Context.User.Username);
+                await FollowupAsync("Failed to send DM. Please check your privacy settings.", ephemeral: true);
+            }
+            
             await FollowupAsync("Check your dms!", ephemeral: true);
             
-            SocketMessage? userAnswer = await messageWaiter.WaitForMessageAsync(Context.User.Id, channel.Id, TimeSpan.FromSeconds(20));
+            SocketMessage? userAnswer = await messageWaiter.WaitForMessageAsync(Context.User.Id, channel.Id, TimeSpan.FromMinutes(1));
             logger.LogInformation("[{Source}] Received message from user {User}: {Message}", "Bot", Context.User.Username, userAnswer?.Content);
-            
             
             ISocketMessageChannel? invokationChannel = Context.Channel;
             
@@ -41,19 +52,13 @@ public class SendMessageModule(ILogger<SendMessageModule> logger, IMessageWaiter
             else
             {
                 await invokationChannel.SendMessageAsync($"User {Context.User.Username} did not respond within the timeout period.");
-                throw new TimeoutException($"User {Context.User.Username} did not respond within the timeout period.");
             }
             
-        }
-        catch (TimeoutException e)
-        {
-            logger.LogError(e, "[{Source}] Failed to send DM to {User}", "Bot", Context.User.Username);
-            await FollowupAsync("Failed to send DM. Please check your privacy settings.", ephemeral: true);
         }
         catch (NullReferenceException e)
         {
             logger.LogWarning("[{Source}] Invocation channel is null for user {User}, {Exception}", "Bot", Context.User.Username, e.Message);
-            await FollowupAsync("Failed to send DM. Please check your privacy settings.", ephemeral: true);
+            await FollowupAsync("Couldn't find the channel to post your reply in.", ephemeral: true);
         }
     }
 }
