@@ -31,6 +31,7 @@ public class SendMessageModule(ILogger<SendMessageModule> logger, IMessageWaiter
             {
                 logger.LogError(e, "[{Source}] Failed to send DM to {User}", "Bot", Context.User.Username);
                 await FollowupAsync("Failed to send DM. Please check your privacy settings.", ephemeral: true);
+                return;
             }
             
             await FollowupAsync("Check your dms!", ephemeral: true);
@@ -42,8 +43,9 @@ public class SendMessageModule(ILogger<SendMessageModule> logger, IMessageWaiter
             
             if (invokationChannel == null)
             {
-                throw new NullReferenceException($"Invocation channel is null for user {Context.User.Username}");
-                
+                logger.LogWarning("[{Source}] Invocation channel is null for user {User}", "Bot", Context.User.Username);
+                await FollowupAsync("Couldn't find the channel to post your reply in.", ephemeral: true);
+                return;
             }
             if (userAnswer != null)
             {
@@ -55,10 +57,10 @@ public class SendMessageModule(ILogger<SendMessageModule> logger, IMessageWaiter
             }
             
         }
-        catch (NullReferenceException e)
+        catch (Exception e)
         {
-            logger.LogWarning("[{Source}] Invocation channel is null for user {User}, {Exception}", "Bot", Context.User.Username, e.Message);
-            await FollowupAsync("Couldn't find the channel to post your reply in.", ephemeral: true);
+            logger.LogCritical(e, "[{Source}] An unexpected error occurred while processing the SendMessage command for user {User}", "Bot", Context.User.Username);
+            await FollowupAsync("An unexpected error occurred. Please try again later.", ephemeral: true);
         }
     }
 }
