@@ -1,0 +1,48 @@
+﻿name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_VERSION: "10.0.x"
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  build:
+    name: Build & test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore Orange.sln
+
+      - name: Check formatting
+        # Non-blocking: the repo has pre-existing formatting debt. Flip this to
+        # a hard failure (drop continue-on-error) once `dotnet format` is clean.
+        continue-on-error: true
+        run: dotnet format Orange.sln --verify-no-changes --severity warn
+
+      - name: Build
+        run: dotnet build Orange.sln --no-restore --configuration Release -warnaserror
+
+      - name: Test
+        run: |
+          if git ls-files -- '*Tests.csproj' '*.Tests/*.csproj' | grep -q .; then
+            dotnet test Orange.sln --no-build --configuration Release --logger "console;verbosity=normal"
+          else
+            echo "No test projects found yet, skipping dotnet test."
+          fi
+        shell: bash
