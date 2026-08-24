@@ -59,7 +59,7 @@ public class SendMessageModule(ILogger<SendMessageModule> logger, IMessageWaiter
         }
         catch (Exception e)
         {
-            logger.LogCritical(e, "[{Source}] An unexpected error occurred while processing the SendMessage command for user {User}", "Bot", Context.User.Username);
+            logger.LogError(e, "[{Source}] An unexpected error occurred while processing the SendMessage command for user {User}", "Bot", Context.User.Username);
             await FollowupAsync("An unexpected error occurred. Please try again later.", ephemeral: true);
         }
     }
