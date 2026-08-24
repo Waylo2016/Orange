@@ -6,13 +6,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Orange.Bot.Commands;
 
-public class SendMessageModule(ILogger<SendMessageModule> logger): InteractionModuleBase<SocketInteractionContext>
+public class SendMessageModule(ILogger<SendMessageModule> logger) : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("sendmessage", "sends the user a DM with a message")]
     public async Task SendMessage()
     {
         logger.LogInformation("[{Source}] SendMessage command invoked by user {User}", "BOT", Context.User.Username);
-        
+
         await DeferAsync(ephemeral: true);
         try
         {
