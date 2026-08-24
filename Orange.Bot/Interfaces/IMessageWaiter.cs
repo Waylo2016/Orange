@@ -13,7 +13,7 @@ public interface IMessageWaiter
     /// </summary>
     /// <param name="userId">the userId of the user to wait for</param>
     /// <param name="channelId">the channelId of the user to wait for</param>
-    /// <param name="timeout">timeout preferred in seconds</param>
+    /// <param name="timeout">timeout preferred in minutes</param>
     /// <param name="cancellationToken">cancellation token</param>
     /// <returns>
     /// The first message sent by <paramref name="userId"/> in the channel

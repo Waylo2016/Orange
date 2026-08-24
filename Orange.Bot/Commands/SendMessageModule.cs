@@ -28,6 +28,12 @@ public class SendMessageModule(ILogger<SendMessageModule> logger, IMessageWaiter
             
             
             ISocketMessageChannel? invokationChannel = Context.Channel;
+            
+            if (invokationChannel == null)
+            {
+                throw new NullReferenceException($"Invocation channel is null for user {Context.User.Username}");
+                
+            }
             if (userAnswer != null)
             {
                 await invokationChannel.SendMessageAsync($"User {Context.User.Username} responded with: {userAnswer.Content}");
@@ -35,12 +41,18 @@ public class SendMessageModule(ILogger<SendMessageModule> logger, IMessageWaiter
             else
             {
                 await invokationChannel.SendMessageAsync($"User {Context.User.Username} did not respond within the timeout period.");
+                throw new TimeoutException($"User {Context.User.Username} did not respond within the timeout period.");
             }
             
         }
-        catch (Exception e)
+        catch (TimeoutException e)
         {
             logger.LogError(e, "[{Source}] Failed to send DM to {User}", "Bot", Context.User.Username);
+            await FollowupAsync("Failed to send DM. Please check your privacy settings.", ephemeral: true);
+        }
+        catch (NullReferenceException e)
+        {
+            logger.LogWarning("[{Source}] Invocation channel is null for user {User}, {Exception}", "Bot", Context.User.Username, e.Message);
             await FollowupAsync("Failed to send DM. Please check your privacy settings.", ephemeral: true);
         }
     }

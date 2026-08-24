@@ -25,7 +25,6 @@ public class Program
                 GatewayIntents =   GatewayIntents.Guilds 
                                  | GatewayIntents.DirectMessages 
                                  | GatewayIntents.MessageContent 
-                                 | GatewayIntents.GuildMembers 
                                  | GatewayIntents.GuildMessages
             }));
         
@@ -33,8 +32,6 @@ public class Program
         builder.Services.AddSingleton(sp => 
             new InteractionService(sp.GetRequiredService<DiscordSocketClient>()));
         builder.Services.AddSingleton<IMessageWaiter, MessageWaiter>();
-
-        builder.Services.AddHostedService<Worker>();
         builder.Services.AddHostedService<SlashCommandRegistrar>();
         
         var host = builder.Build();
