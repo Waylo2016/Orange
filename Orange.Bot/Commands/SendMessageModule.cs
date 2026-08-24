@@ -8,24 +8,24 @@ using Orange.Bot.Interfaces;
 
 namespace Orange.Bot.Commands;
 
-public class SendMessageModule(ILogger<SendMessageModule> logger, IMessageWaiter messageWaiter): InteractionModuleBase<SocketInteractionContext>
+public class SendMessageModule(ILogger<SendMessageModule> logger, IMessageWaiter messageWaiter) : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("sendmessage", "sends the user a DM with a message")]
     public async Task SendMessage()
     {
-        
+
         logger.LogInformation("[{Source}] SendMessage command invoked by user {User}", "Bot", Context.User.Username);
-        
+
         await DeferAsync(ephemeral: true);
         try
         {
             IDMChannel? channel = null;
-            
+
             try
             {
                 channel = await Context.User.CreateDMChannelAsync();
                 await channel.SendMessageAsync("Your Mom!");
-                
+
             }
             catch (Exception e)
             {
@@ -33,14 +33,14 @@ public class SendMessageModule(ILogger<SendMessageModule> logger, IMessageWaiter
                 await FollowupAsync("Failed to send DM. Please check your privacy settings.", ephemeral: true);
                 return;
             }
-            
+
             await FollowupAsync("Check your dms!", ephemeral: true);
-            
+
             SocketMessage? userAnswer = await messageWaiter.WaitForMessageAsync(Context.User.Id, channel.Id, TimeSpan.FromMinutes(1));
             logger.LogInformation("[{Source}] Received message from user {User}: {Message}", "Bot", Context.User.Username, userAnswer?.Content);
-            
+
             ISocketMessageChannel? invokationChannel = Context.Channel;
-            
+
             if (invokationChannel == null)
             {
                 logger.LogWarning("[{Source}] Invocation channel is null for user {User}", "Bot", Context.User.Username);
@@ -55,7 +55,7 @@ public class SendMessageModule(ILogger<SendMessageModule> logger, IMessageWaiter
             {
                 await invokationChannel.SendMessageAsync($"User {Context.User.Username} did not respond within the timeout period.");
             }
-            
+
         }
         catch (Exception e)
         {

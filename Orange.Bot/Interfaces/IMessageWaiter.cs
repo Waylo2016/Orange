@@ -7,7 +7,7 @@ namespace Orange.Bot.Interfaces;
 
 public interface IMessageWaiter
 {
-    
+
     /// <summary>
     /// waits for a message from a specific user in a specific channel, with a timeout and a cancellation token
     /// </summary>
@@ -21,9 +21,9 @@ public interface IMessageWaiter
     /// or <c>null</c> if no message is received within the timeout period or if the operation is canceled.
     /// </returns>
     public Task<SocketMessage?> WaitForMessageAsync(
-        ulong userId, 
-        ulong channelId, 
-        TimeSpan timeout, 
+        ulong userId,
+        ulong channelId,
+        TimeSpan timeout,
         CancellationToken cancellationToken = default
         );
 }

@@ -10,16 +10,16 @@ namespace Orange.Bot.Services;
 public class MessageWaiter(DiscordSocketClient client, ILogger<MessageWaiter> logger) : IMessageWaiter
 {
     public async Task<SocketMessage?> WaitForMessageAsync(
-        ulong userId, 
-        ulong channelId, 
-        TimeSpan timeout, 
+        ulong userId,
+        ulong channelId,
+        TimeSpan timeout,
         CancellationToken cancellationToken)
     {
-        
+
         // Create a TaskCompletionSource to await the message
         var tcs = new TaskCompletionSource<SocketMessage?>(
             TaskCreationOptions.RunContinuationsAsynchronously);
-        
+
         // Define a local function to handle incoming messages
         Task Handler(SocketMessage message)
         {
@@ -45,7 +45,7 @@ public class MessageWaiter(DiscordSocketClient client, ILogger<MessageWaiter> lo
         catch (OperationCanceledException)
         {
             // Log the timeout event
-            logger.LogInformation("[{Source}] | Timeout waiting for message from user {UserId} in channel {ChannelId}", "MessageWaiter",  userId, channelId);
+            logger.LogInformation("[{Source}] | Timeout waiting for message from user {UserId} in channel {ChannelId}", "MessageWaiter", userId, channelId);
             return null;
         }
         finally
