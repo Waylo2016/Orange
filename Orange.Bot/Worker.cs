@@ -17,7 +17,7 @@ public class Worker : BackgroundService
     private readonly DiscordSocketClient _client;
     private readonly InteractionService _InteractionService;
     private readonly IServiceProvider _services;
-    
+
     public Worker(
         ILogger<Worker> logger, 
         IConfiguration config, 
@@ -37,26 +37,26 @@ public class Worker : BackgroundService
     {
         var token = _config["Discord:Api:Key"]
             ?? throw new InvalidOperationException("Discord API key is not configured.");
-        
-        
+
+
         _client.InteractionCreated += async interaction =>
         {
             var ctx = new SocketInteractionContext(_client, interaction);
             await _InteractionService.ExecuteCommandAsync(ctx, _services);
         };
-        
+
         _client.Ready += async () =>
         {
             await _client.SetActivityAsync(new Game("Your Mom", ActivityType.Watching));
         };
-        
+
         await _client.LoginAsync(TokenType.Bot, token);
-        
-        
+
+
         await _client.StartAsync();
         await Task.Delay(Timeout.Infinite, stoppingToken);
     }
-    
+
     private Task LogAsync(LogMessage message)
     {
         var level = message.Severity switch

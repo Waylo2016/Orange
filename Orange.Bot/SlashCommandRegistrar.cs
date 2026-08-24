@@ -18,7 +18,7 @@ public class SlashCommandRegistrar : IHostedService
     private readonly IConfiguration _config;
     private readonly ILogger<SlashCommandRegistrar> _logger;
     private readonly TaskCompletionSource _readyTcs = new();
-    
+
     public SlashCommandRegistrar(
         DiscordSocketClient client,
         InteractionService interactionService,
@@ -34,17 +34,17 @@ public class SlashCommandRegistrar : IHostedService
 
         _client.Ready += OnReady;
     }
-    
+
     private Task OnReady()
     {
         _readyTcs.TrySetResult();
         return Task.CompletedTask;
     }
-    
+
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         await _interactionService.AddModulesAsync(Assembly.GetExecutingAssembly(), _serviceProvider);
-        
+
         await _readyTcs.Task.WaitAsync(cancellationToken);
 
         var devGuildId = _config.GetValue<ulong?>("Discord:DevGuildId");

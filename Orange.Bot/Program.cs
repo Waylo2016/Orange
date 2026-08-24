@@ -14,10 +14,10 @@ public class Program
     public static async Task Main(string[] args)
     {
         var builder = Host.CreateApplicationBuilder(args);
-        
+
         builder.AddServiceDefaults();
         builder.AddSeqEndpoint(connectionName: "seq");
-        
+
         builder.Services.AddHostedService<Worker>();
 
         builder.Services.AddSingleton(new DiscordSocketClient( new DiscordSocketConfig()
@@ -32,9 +32,9 @@ public class Program
             new InteractionService(sp.GetRequiredService<DiscordSocketClient>()));
         builder.Services.AddSingleton<IMessageWaiter, MessageWaiter>();
         builder.Services.AddHostedService<SlashCommandRegistrar>();
-        
+
         var host = builder.Build();
         await host.RunAsync();
-        
+
     }
 }
