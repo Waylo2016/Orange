@@ -30,9 +30,6 @@ jobs:
         run: dotnet restore Orange.sln
 
       - name: Check formatting
-        # Non-blocking: the repo has pre-existing formatting debt. Flip this to
-        # a hard failure (drop continue-on-error) once `dotnet format` is clean.
-        continue-on-error: true
         run: dotnet format Orange.sln --verify-no-changes --severity warn
 
       - name: Build
