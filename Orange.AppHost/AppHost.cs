@@ -39,7 +39,7 @@ public class Program
         var postgresdb = postgres.AddDatabase("OrangeDb");
 
         var api = builder.AddProject<Projects.Orange_Api>("api")
-            .WithHttpEndpoint(8080)
+            .WithHttpEndpoint(8080, name: "http")
             .WithReference(seq)
             .WithReference(postgresdb)
             .WaitFor(postgresdb);

@@ -1,8 +1,12 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Connections.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+using Microsoft.OpenApi;
 using Orange.Api.utils;
 
 
@@ -19,11 +23,41 @@ public class Program
 
         builder.AddNpgsqlDbContext<ApplicationDbContext>(connectionName: "OrangeDb");
         
+        // Set-up versioning
+        builder.Services.AddApiVersioning(options =>
+        {
+            options.DefaultApiVersion = new ApiVersion(1, 0);
+            options.AssumeDefaultVersionWhenUnspecified = true;
+            options.ReportApiVersions = true;
+        });
+        
+        // Set up versioning for Swagger
+        builder.Services.AddApiVersioning().AddApiExplorer(options =>
+        {
+            options.GroupNameFormat = "'v'VVV"; // format: 'v'major[.minor][.patch]
+            options.SubstituteApiVersionInUrl = true;
+        });
 
         // Add services to the container.
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(options =>
+        {
+            options.SwaggerDoc( "v1", new OpenApiInfo
+            {
+                Version = "v1",
+                Title = "Orange API",
+                Description = "The API for the Orange Discord Verification Bot.",
+                Contact = new OpenApiContact
+                {
+                    Name = "Waylo - Discord Bot Developer",
+                    Url = new Uri("https://waylo.tech"),
+                    Email = new string("Waylo@waylo.tech")
+                }
+            }); 
+            string xmlFilename = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+        });
 
         var app = builder.Build();
 
@@ -31,7 +65,10 @@ public class Program
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Orange API v1");
+            });
         }
 
         app.UseHttpsRedirection();
