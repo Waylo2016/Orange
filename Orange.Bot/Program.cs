@@ -25,7 +25,6 @@ public class Program
                 GatewayIntents =   GatewayIntents.Guilds 
                                  | GatewayIntents.DirectMessages 
                                  | GatewayIntents.MessageContent 
-                                 | GatewayIntents.GuildMessages
             }));
         
         //singletons for the interaction service
