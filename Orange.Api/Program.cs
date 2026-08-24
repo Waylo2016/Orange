@@ -1,3 +1,10 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Connections.Features;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+using Orange.Api.utils;
+
 
 namespace Orange.Api;
 
@@ -9,6 +16,9 @@ public class Program
 
         builder.AddServiceDefaults();
         builder.AddSeqEndpoint(connectionName: "seq");
+
+        builder.AddNpgsqlDbContext<ApplicationDbContext>(connectionName: "OrangeDb");
+        
 
         // Add services to the container.
         builder.Services.AddControllers();
