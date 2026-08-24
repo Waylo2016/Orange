@@ -10,7 +10,7 @@ public class Program
     {
         var builder = DistributedApplication.CreateBuilder(args);
         builder.AddDockerComposeEnvironment("Orange");
-        
+
         const string stackLabel = "com.docker.compose.project=Orange";
 
         var discordApiKey = builder.AddParameter("DiscordApiKey", secret: true);
@@ -34,7 +34,7 @@ public class Program
             .WithContainerRuntimeArgs("--label", stackLabel)
             .WithLifetime(ContainerLifetime.Persistent)
             .WithDataVolume();
-        
+
         var postgresdb = postgres.AddDatabase("postgresdb");
 
         var api = builder.AddProject<Projects.Orange_Api>("api")
@@ -51,7 +51,7 @@ public class Program
 
         var gateway = builder.AddBlazorGateway("gateway")
             .WithExternalHttpEndpoints();
-        
+
         var bot = builder.AddProject<Projects.Orange_Bot>("discord-bot")
             .WithEnvironment("Discord__Api__Key", discordApiKey)
             .WithEnvironment("Discord__Client__Id", discordClientId)
@@ -61,7 +61,7 @@ public class Program
             .WaitFor(api);
 
         gateway.WithBlazorClientApp(blazorApp);
-        
+
         builder.Build().Run();
     }
 }
