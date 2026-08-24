@@ -51,12 +51,12 @@ public class SlashCommandRegistrar : IHostedService
         if (devGuildId.HasValue)
         {
             await _interactionService.RegisterCommandsToGuildAsync(devGuildId.Value);
-            _logger.LogInformation("BOT | Slash commands registered to guild {GuildId}", devGuildId.Value);
+            _logger.LogInformation("[{Source}] | Slash commands registered to guild {GuildId}", "SlashCommandRegistrar", devGuildId.Value);
         }
         else
         {
             await _interactionService.RegisterCommandsGloballyAsync();
-            _logger.LogInformation("BOT | Slash commands registered globally");
+            _logger.LogInformation("[{Source}] | Slash commands registered globally", "SlashCommandRegistrar");
         }
     }
 

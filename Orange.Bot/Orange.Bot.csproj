@@ -17,8 +17,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Orange.ServiceDefaults\Orange.ServiceDefaults.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
 </Project>
