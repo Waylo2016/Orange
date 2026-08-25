@@ -32,13 +32,13 @@ public class GuildService(ApplicationDbContext _context, ILogger<GuildService> _
         {
             return false;
         }
-        
+
         _context.Guilds.Remove(guild);
         await _context.SaveChangesAsync();
         _logger.LogInformation("Bot invoked leave with ID {GuildId}", guild.GuildId);
         return true;
     }
-    
+
     public async Task<int> GetGuildCountAsync()
     {
         return await _context.Guilds.CountAsync();

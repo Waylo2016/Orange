@@ -10,7 +10,7 @@ public class NotFoundException : Exception
     public NotFoundException()
     {
     }
-    
+
     /// <summary>
     /// Initializes a new instance of the <see cref="NotFoundException"/> class with a specified error message.
     /// </summary>
@@ -18,7 +18,7 @@ public class NotFoundException : Exception
     public NotFoundException(string message) : base(message)
     {
     }
-    
+
     /// <summary>
     /// Initializes a new instance of the <see cref="NotFoundException"/> class with a specified error message and a reference to the inner exception that is the cause of this exception.
     /// </summary>

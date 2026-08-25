@@ -25,7 +25,7 @@ public class GuildController(IGuildService guildService) : ControllerBase
     public async Task<ActionResult<Guild>> GuildJoin([FromRoute] ulong id)
     {
         Guild? guild = await guildService.JoinGuildAsync(id);
-        
+
         return CreatedAtAction(
             actionName: nameof(GuildJoin),
             routeValues: new

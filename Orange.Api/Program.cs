@@ -39,8 +39,8 @@ public class Program
         });
 
         builder.Services.AddScoped<IGuildService, GuildService>();
-        
-        
+
+
         // Set-up versioning
         builder.Services.AddApiVersioning(options =>
         {
@@ -48,7 +48,7 @@ public class Program
             options.AssumeDefaultVersionWhenUnspecified = true;
             options.ReportApiVersions = true;
         });
-        
+
         // Set up versioning for Swagger
         builder.Services.AddApiVersioning().AddApiExplorer(options =>
         {
@@ -61,7 +61,7 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options =>
         {
-            options.SwaggerDoc( "v1", new OpenApiInfo
+            options.SwaggerDoc("v1", new OpenApiInfo
             {
                 Version = "v1",
                 Title = "Orange API",
@@ -72,7 +72,7 @@ public class Program
                     Url = new Uri("https://waylo.tech"),
                     Email = new string("Waylo@waylo.tech")
                 }
-            }); 
+            });
             string xmlFilename = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
         });

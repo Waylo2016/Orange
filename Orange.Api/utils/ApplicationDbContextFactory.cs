@@ -12,7 +12,7 @@ public class ApplicationDbContextFactory()
 
         IConfigurationBuilder builder = new ConfigurationBuilder().AddUserSecrets(typeof(ApplicationDbContextFactory).Assembly);
         IConfigurationRoot configuration = builder.Build();
-        
+
         string? postgresUsername = configuration["Parameters:postgres-username"];
         string? postgresPassword = configuration["Parameters:Orange-password"];
 
