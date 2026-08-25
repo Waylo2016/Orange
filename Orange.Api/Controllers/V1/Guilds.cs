@@ -18,11 +18,11 @@ public class GuildController(IGuildService guildService) : ControllerBase
     /// </summary>
     /// <param name="id">The ID of the guild to join</param>
     /// <returns>An object representing the joined guild</returns>
-    [HttpPost("join/{id:long}")]
+    [HttpPost("join/{id:ulong}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<Guild>> GuildJoin([FromRoute] ulong id)
     {
-        Guild? guild = await guildService.JoinGuildAsync(id);
+        Guild guild = await guildService.JoinGuildAsync(id);
 
         return CreatedAtAction(
             actionName: nameof(GuildJoin),
@@ -38,7 +38,7 @@ public class GuildController(IGuildService guildService) : ControllerBase
     /// </summary>
     /// <param name="id">The ID of the guild to leave</param>
     /// <returns>removed successfully</returns>
-    [HttpPost("leave/{id:long}")]
+    [HttpPost("leave/{id:ulong}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<ActionResult<IActionResult>> GuildLeave([FromRoute] ulong id)
     {

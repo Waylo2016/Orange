@@ -2,10 +2,12 @@ using System;
 using System.IO;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi;
+using Orange.Api.Constraints;
 using Orange.Api.Interfaces;
 using Orange.Api.Services;
 using Orange.Api.utils;
@@ -27,22 +29,22 @@ public class Program
         IConfigurationRoot configuration;
 
         if (builder.Environment.IsDevelopment())
-        { 
+        {
             configuration = builder.Configuration.AddJsonFile(
-                    "appsettings.Development.json", 
-                    optional: false, 
+                    "appsettings.Development.json",
+                    optional: false,
                     reloadOnChange: true)
                 .Build();
         }
         else
         {
             configuration = builder.Configuration.AddJsonFile(
-                    "appsettings.json", 
-                    optional: false, 
+                    "appsettings.json",
+                    optional: false,
                     reloadOnChange: true)
                 .Build();
         }
-        
+
 
         builder.Services.AddCors(options =>
         {
@@ -94,6 +96,12 @@ public class Program
             });
             string xmlFilename = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+        });
+
+        //register routeoptions for unsigned params
+        builder.Services.Configure<RouteOptions>(options =>
+        {
+            options.ConstraintMap.Add("ulong", typeof(ULongRouteConstraint));
         });
 
         var app = builder.Build();
