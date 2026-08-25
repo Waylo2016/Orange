@@ -1,9 +1,8 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Connections.Features;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi;
@@ -25,6 +24,25 @@ public class Program
 
         builder.AddNpgsqlDbContext<ApplicationDbContext>(connectionName: "OrangeDb");
 
+        IConfigurationRoot configuration;
+
+        if (builder.Environment.IsDevelopment())
+        { 
+            configuration = builder.Configuration.AddJsonFile(
+                    "appsettings.Development.json", 
+                    optional: false, 
+                    reloadOnChange: true)
+                .Build();
+        }
+        else
+        {
+            configuration = builder.Configuration.AddJsonFile(
+                    "appsettings.json", 
+                    optional: false, 
+                    reloadOnChange: true)
+                .Build();
+        }
+        
 
         builder.Services.AddCors(options =>
         {
@@ -32,7 +50,7 @@ public class Program
                 policy =>
             {
                 policy
-                    .WithOrigins("http://localhost:8080")
+                    .WithOrigins($"{configuration["Api:BaseUrl"]}")
                     .AllowAnyHeader()
                     .AllowAnyMethod();
             });

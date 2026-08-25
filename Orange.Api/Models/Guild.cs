@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Orange.Api.Models;
+﻿namespace Orange.Api.Models;
 
 
 public class Guild
