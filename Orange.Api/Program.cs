@@ -42,7 +42,6 @@ public class Program
 
 
         // Set up versioning for Swagger
-        builder.Services.AddApiVersioning().AddMvc();
         builder.Services.AddApiVersioning(options =>
             {
                 options.DefaultApiVersion = new ApiVersion(1, 0);
@@ -54,7 +53,7 @@ public class Program
         {
             options.GroupNameFormat = "'v'VVV"; // format: 'v'major[.minor][.patch]
             options.SubstituteApiVersionInUrl = true;
-        });
+        }).AddMvc();
 
 
 
