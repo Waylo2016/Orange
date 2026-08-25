@@ -41,20 +41,22 @@ public class Program
         builder.Services.AddScoped<IGuildService, GuildService>();
 
 
-        // Set-up versioning
-        builder.Services.AddApiVersioning(options =>
-        {
-            options.DefaultApiVersion = new ApiVersion(1, 0);
-            options.AssumeDefaultVersionWhenUnspecified = true;
-            options.ReportApiVersions = true;
-        });
-
         // Set up versioning for Swagger
-        builder.Services.AddApiVersioning().AddApiExplorer(options =>
+        builder.Services.AddApiVersioning().AddMvc();
+        builder.Services.AddApiVersioning(options =>
+            {
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.ReportApiVersions = true;
+                options.ApiVersionReader = new UrlSegmentApiVersionReader();
+            }
+
+        ).AddApiExplorer(options =>
         {
             options.GroupNameFormat = "'v'VVV"; // format: 'v'major[.minor][.patch]
             options.SubstituteApiVersionInUrl = true;
         });
+
+
 
         // Add services to the container.
         builder.Services.AddControllers();

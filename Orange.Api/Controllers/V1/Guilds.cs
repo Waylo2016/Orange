@@ -18,8 +18,8 @@ public class GuildController(IGuildService guildService) : ControllerBase
     /// <summary>
     /// invoked when bot joins a guild
     /// </summary>
-    /// <param name="guildIdDto">DTO containing the joined guild id</param>
-    /// <returns>A <paramref name="guildIdDto"/> object representing the joined guild</returns>
+    /// <param name="id">The ID of the guild to join</param>
+    /// <returns>A <paramref name="guild"/> object representing the joined guild</returns>
     [HttpPost("join/{id:long}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<Guild>> GuildJoin([FromRoute] ulong id)
@@ -39,10 +39,10 @@ public class GuildController(IGuildService guildService) : ControllerBase
     /// invoked when bot leaves a guild
     /// </summary>
     /// <param name="id">The ID of the guild to leave</param>
-    /// <returns>A <paramref name="guildLeaveDto"/> object representing the left guild</returns>
-    [HttpPost("leave/{id:int}")]
+    /// <returns>removed successfully</returns>
+    [HttpPost("leave/{id:long}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<ActionResult<IActionResult>> GuildLeave([FromRoute] uint id)
+    public async Task<ActionResult<IActionResult>> GuildLeave([FromRoute] ulong id)
     {
 
         bool result = await guildService.LeaveGuildAsync(id);
