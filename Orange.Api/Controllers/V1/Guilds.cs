@@ -28,7 +28,7 @@ public class GuildController(IGuildService guildService) : ControllerBase
             actionName: nameof(GuildJoin),
             routeValues: new
             {
-                guildId = guild.GuildId
+                id = guild.GuildId
             },
             value: guild);
     }
