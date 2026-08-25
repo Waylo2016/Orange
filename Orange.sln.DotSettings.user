@@ -1,2 +1,28 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ATokenType_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003FAppData_003FRoaming_003FJetBrains_003FRider2026_002E1_003Fresharper_002Dhost_003FSourcesCache_003F3765155d69e2b149799a6d5687bd21370608a5f2610923572201d899ebe5649_003FTokenType_002Ecs/@EntryIndexedValue">ForceIncluded</s:String></wpf:ResourceDictionary>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ATokenType_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003FAppData_003FRoaming_003FJetBrains_003FRider2026_002E1_003Fresharper_002Dhost_003FSourcesCache_003F3765155d69e2b149799a6d5687bd21370608a5f2610923572201d899ebe5649_003FTokenType_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=1628476f_002D3970_002D41c3_002Da971_002D2b2e4b5f573d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="IntegrationTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::E70A199B-B1B6-4E33-AEF9-F503F09DE288::net10.0::xUnit.Tests.Tests.IntegrationTests&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=562d103a_002De784_002D4e46_002D98e0_002D162ca2729e6d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetWebResourceRootReturnsOkStatusCode" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::E70A199B-B1B6-4E33-AEF9-F503F09DE288::net10.0::xUnit.Tests.Tests.IntegrationTests.GetWebResourceRootReturnsOkStatusCode&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7b5d5fa4_002D6900_002D41a5_002D858d_002Dc36c06361b35/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetWebResourceRootReturnsOkStatusCode #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::E70A199B-B1B6-4E33-AEF9-F503F09DE288::net10.0::xUnit.Tests.Tests.IntegrationTests.GetWebResourceRootReturnsOkStatusCode&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7be45565_002Df2f0_002D4b35_002D8a09_002D441887e38cc7/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TestGuildCreation" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::E70A199B-B1B6-4E33-AEF9-F503F09DE288::net10.0::xUnit.Tests.Bot.GuildTests&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b500c2b7_002D6083_002D4760_002D9787_002Dcf8e1a25bf48/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetWebResourceRootReturnsOkStatusCode #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::E70A199B-B1B6-4E33-AEF9-F503F09DE288::net10.0::xUnit.Tests.Tests.IntegrationTests.GetWebResourceRootReturnsOkStatusCode&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	</wpf:ResourceDictionary>
