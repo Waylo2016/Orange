@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Seq" Version="13.5.1" />
+    <PackageReference Include="Aspire.Seq" Version="13.5.2" />
     <PackageReference Include="Discord.Net" Version="3.20.1" />
     <PackageReference Include="Discord.Net.Interactions" Version="3.20.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.5" />
@@ -16,5 +16,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Orange.ServiceDefaults\Orange.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Events\" />
   </ItemGroup>
 </Project>

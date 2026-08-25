@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Connections.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi;
+using Orange.Api.Interfaces;
+using Orange.Api.Services;
 using Orange.Api.utils;
 
 
@@ -22,6 +24,22 @@ public class Program
         builder.AddSeqEndpoint(connectionName: "seq");
 
         builder.AddNpgsqlDbContext<ApplicationDbContext>(connectionName: "OrangeDb");
+
+
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(name: "allowedOrigins",
+                policy =>
+            {
+                policy
+                    .WithOrigins("http://localhost:8080")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
+
+        builder.Services.AddScoped<IGuildService, GuildService>();
+        
         
         // Set-up versioning
         builder.Services.AddApiVersioning(options =>
@@ -72,6 +90,7 @@ public class Program
         }
 
         app.UseHttpsRedirection();
+        app.UseCors("allowedOrigins");
 
         app.UseAuthorization();
 

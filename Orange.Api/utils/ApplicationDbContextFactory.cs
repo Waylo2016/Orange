@@ -14,7 +14,7 @@ public class ApplicationDbContextFactory()
         IConfigurationRoot configuration = builder.Build();
         
         string? postgresUsername = configuration["Parameters:postgres-username"];
-        string? postgresPassword = configuration["Parameters:postgres-password"];
+        string? postgresPassword = configuration["Parameters:Orange-password"];
 
         DbContextOptionsBuilder<ApplicationDbContext> optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
         optionsBuilder.UseNpgsql($"Host=localhost;Database=OrangeDb;Username={postgresUsername};Password={postgresPassword}");

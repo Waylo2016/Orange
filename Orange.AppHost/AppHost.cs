@@ -26,13 +26,14 @@ public class Program
             .WithHttpEndpoint(port: 5341, targetPort: 80, name: "http")
             .WithEnvironment("ACCEPT_EULA", "Y");
 
-        var postgres = builder.AddPostgres("OrangePostgres", postgresUsername)
+        var postgres = builder.AddPostgres("Orange", postgresUsername)
             .WithPgAdmin(pgAdmin => pgAdmin.WithHostPort(5050)
                 .WithContainerName("pgadmin")
                 .WithContainerRuntimeArgs("--label", stackLabel)
                 .WithLifetime(ContainerLifetime.Persistent))
             .WithContainerName("postgres")
             .WithContainerRuntimeArgs("--label", stackLabel)
+            .WithHttpEndpoint(port: 5432, targetPort: 5432, name: "postgres")
             .WithLifetime(ContainerLifetime.Persistent)
             .WithDataVolume(isReadOnly: false);
 
