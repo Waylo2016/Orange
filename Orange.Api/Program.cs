@@ -91,7 +91,7 @@ public class Program
                 {
                     Name = "Waylo - Discord Bot Developer",
                     Url = new Uri("https://waylo.tech"),
-                    Email = new string("Waylo@waylo.tech")
+                    Email = "Waylo@waylo.tech"
                 }
             });
             string xmlFilename = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
