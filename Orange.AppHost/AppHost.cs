@@ -16,6 +16,7 @@ public class Program
         var discordApiKey = builder.AddParameter("DiscordApiKey", secret: true);
         var discordClientId = builder.AddParameter("DiscordClientId", secret: true);
         var discordDevGuildId = builder.AddParameter("DevGuildId", secret: true);
+        var postgresUsername = builder.AddParameter("postgres-username", secret: true);
 
         var seq = builder.AddSeq("seq")
             .ExcludeFromManifest()
@@ -25,20 +26,21 @@ public class Program
             .WithHttpEndpoint(port: 5341, targetPort: 80, name: "http")
             .WithEnvironment("ACCEPT_EULA", "Y");
 
-        var postgres = builder.AddPostgres("postgres")
+        var postgres = builder.AddPostgres("Orange", postgresUsername)
             .WithPgAdmin(pgAdmin => pgAdmin.WithHostPort(5050)
                 .WithContainerName("pgadmin")
                 .WithContainerRuntimeArgs("--label", stackLabel)
                 .WithLifetime(ContainerLifetime.Persistent))
             .WithContainerName("postgres")
             .WithContainerRuntimeArgs("--label", stackLabel)
+            .WithHttpEndpoint(port: 5432, targetPort: 5432, name: "postgres")
             .WithLifetime(ContainerLifetime.Persistent)
-            .WithDataVolume();
+            .WithDataVolume(isReadOnly: false);
 
-        var postgresdb = postgres.AddDatabase("postgresdb");
+        var postgresdb = postgres.AddDatabase("OrangeDb");
 
         var api = builder.AddProject<Projects.Orange_Api>("api")
-            .WithHttpEndpoint(8080)
+            .WithHttpEndpoint(8080, name: "http")
             .WithReference(seq)
             .WithReference(postgresdb)
             .WaitFor(postgresdb);
