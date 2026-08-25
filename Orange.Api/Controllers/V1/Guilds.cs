@@ -19,7 +19,7 @@ public class GuildController(IGuildService guildService) : ControllerBase
     /// invoked when bot joins a guild
     /// </summary>
     /// <param name="id">The ID of the guild to join</param>
-    /// <returns>A <paramref name="guild"/> object representing the joined guild</returns>
+    /// <returns>An object representing the joined guild</returns>
     [HttpPost("join/{id:long}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<Guild>> GuildJoin([FromRoute] ulong id)
