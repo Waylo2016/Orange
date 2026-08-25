@@ -26,24 +26,7 @@ public class Program
 
         builder.AddNpgsqlDbContext<ApplicationDbContext>(connectionName: "OrangeDb");
 
-        IConfigurationRoot configuration;
 
-        if (builder.Environment.IsDevelopment())
-        {
-            configuration = builder.Configuration.AddJsonFile(
-                    "appsettings.Development.json",
-                    optional: false,
-                    reloadOnChange: true)
-                .Build();
-        }
-        else
-        {
-            configuration = builder.Configuration.AddJsonFile(
-                    "appsettings.json",
-                    optional: false,
-                    reloadOnChange: true)
-                .Build();
-        }
 
 
         builder.Services.AddCors(options =>
@@ -52,7 +35,7 @@ public class Program
                 policy =>
             {
                 policy
-                    .WithOrigins($"{configuration["Api:BaseUrl"]}")
+                    .WithOrigins($"{builder.Configuration["Api:BaseUrl"]}")
                     .AllowAnyHeader()
                     .AllowAnyMethod();
             });

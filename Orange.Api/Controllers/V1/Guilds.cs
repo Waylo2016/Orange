@@ -38,9 +38,9 @@ public class GuildController(IGuildService guildService) : ControllerBase
     /// </summary>
     /// <param name="id">The ID of the guild to leave</param>
     /// <returns>removed successfully</returns>
-    [HttpPost("leave/{id:ulong}")]
+    [HttpDelete("leave/{id:ulong}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<ActionResult<IActionResult>> GuildLeave([FromRoute] ulong id)
+    public async Task<IActionResult> GuildLeave([FromRoute] ulong id)
     {
 
         bool result = await guildService.LeaveGuildAsync(id);
