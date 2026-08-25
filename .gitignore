@@ -56,3 +56,6 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 /.idea
+
+# JetBrains Rider user-specific settings
+*.DotSettings.user
