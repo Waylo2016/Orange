@@ -2,6 +2,7 @@
 using Asp.Versioning;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Orange.Api.DTO.Guild;
 using Orange.Api.Interfaces;
 using Orange.Api.Models;
 
@@ -20,9 +21,9 @@ public class GuildController(IGuildService guildService) : ControllerBase
     /// <returns>An object representing the joined guild</returns>
     [HttpPost("join/{id:ulong}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<ActionResult<Guild>> GuildJoin([FromRoute] ulong id)
+    public async Task<ActionResult<Guild>> GuildJoin([FromRoute] GuildJoinDTO guildJoinDto)
     {
-        Guild guild = await guildService.JoinGuildAsync(id);
+        Guild guild = await guildService.JoinGuildAsync(guildJoinDto);
 
         return CreatedAtAction(
             actionName: nameof(GuildJoin),
@@ -40,10 +41,10 @@ public class GuildController(IGuildService guildService) : ControllerBase
     /// <returns>removed successfully</returns>
     [HttpDelete("leave/{id:ulong}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> GuildLeave([FromRoute] ulong id)
+    public async Task<IActionResult> GuildLeave([FromRoute] GuildLeaveDTO guildLeaveDto)
     {
 
-        bool result = await guildService.LeaveGuildAsync(id);
+        bool result = await guildService.LeaveGuildAsync(guildLeaveDto);
         return result ? NoContent() : Problem("An unexpected error occurred while trying to leave the guild.");
 
     }

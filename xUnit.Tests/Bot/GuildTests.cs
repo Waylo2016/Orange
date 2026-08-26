@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Orange.Api.utils;
 using Moq;
+using Orange.Api.DTO.Guild;
+using Orange.Api.Models;
 using Orange.Api.Services;
 
 namespace xUnit.Tests.Bot;
@@ -14,8 +16,12 @@ public class GuildTests
         .Options;
     private readonly Mock<ILogger<GuildService>> _mockLogger = new();
 
-    private ulong guildId = 123456789012345678; // Example guild ID
-    private ulong guildId2 = 2345678901234567890; // Another example guild ID
+    private const string guildName = "Test Guild"; // Example guild name
+    private const string guildName2 = "Test Guild 2"; // Another example guild name
+
+    private const ulong guildId = 123456789012345678; // Example guild ID
+    private const ulong GuildId2 = 2345678901234567890; // Another example guild ID
+
 
     [Fact]
     public async Task TestGuildCreation()
@@ -27,12 +33,19 @@ public class GuildTests
 
 
         // Act
-        await guildService.JoinGuildAsync(guildId);
+        await guildService.JoinGuildAsync(new GuildJoinDTO()
+        {
+            GuildId = guildId,
+            GuildName = "Test Guild"
+        });
 
         // Assert
-        var guild = await context.Guilds.FirstOrDefaultAsync(g => g.GuildId == guildId);
+        Guild? guild = await context.Guilds.FirstOrDefaultAsync(g => g.GuildId == guildId);
+
         Assert.NotNull(guild);
         Assert.Equal(guildId, guild.GuildId);
+        Assert.NotNull(guild.GuildName);
+        Assert.Equal(guildName, guild.GuildName);
     }
 
 
@@ -44,8 +57,15 @@ public class GuildTests
         GuildService guildService = new(context, _mockLogger.Object);
 
         // Act
-        await guildService.JoinGuildAsync(guildId);
-        bool result = await guildService.LeaveGuildAsync(guildId);
+        await guildService.JoinGuildAsync(new GuildJoinDTO()
+        {
+            GuildId = guildId,
+            GuildName = guildName
+        });
+        bool result = await guildService.LeaveGuildAsync(new GuildLeaveDTO()
+        {
+            GuildId = guildId
+        });
 
         // Assert
         Assert.True(result);
@@ -61,8 +81,16 @@ public class GuildTests
         GuildService guildService = new(context, _mockLogger.Object);
 
         // Act
-        await guildService.JoinGuildAsync(guildId);
-        await guildService.JoinGuildAsync(guildId2);
+        await guildService.JoinGuildAsync(new GuildJoinDTO()
+        {
+            GuildId = guildId,
+            GuildName = guildName
+        });
+        await guildService.JoinGuildAsync(new GuildJoinDTO()
+        {
+            GuildId = GuildId2,
+            GuildName = guildName2
+        });
         int count = await guildService.GetGuildCountAsync();
 
         // Assert
