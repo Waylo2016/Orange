@@ -62,10 +62,7 @@ public class GuildTests
             GuildId = guildId,
             GuildName = guildName
         });
-        bool result = await guildService.LeaveGuildAsync(new GuildLeaveDTO()
-        {
-            GuildId = guildId
-        });
+        bool result = await guildService.LeaveGuildAsync(guildId);
 
         // Assert
         Assert.True(result);

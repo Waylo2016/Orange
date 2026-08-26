@@ -25,10 +25,10 @@ public class GuildService(ApplicationDbContext _context, ILogger<GuildService> _
         return guild;
     }
 
-    public async Task<bool> LeaveGuildAsync(GuildLeaveDTO guildLeaveDto)
+    public async Task<bool> LeaveGuildAsync(ulong id)
     {
         var guild = await _context.Guilds
-            .FirstOrDefaultAsync(g => g.GuildId == guildLeaveDto.GuildId);
+            .FirstOrDefaultAsync(g => g.GuildId == id);
 
         if (guild == null)
         {
