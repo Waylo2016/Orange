@@ -8,7 +8,7 @@ public interface IGuildService
 {
     Task<Guild> JoinGuildAsync(GuildJoinDTO guildJoinDto);
 
-    Task<bool> LeaveGuildAsync(ulong guildLeaveDto);
+    Task<bool> LeaveGuildAsync(ulong id);
 
     Task<int> GetGuildCountAsync();
 }
