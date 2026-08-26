@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Orange.Api.DTO.Guild;
 using Orange.Api.Interfaces;
 using Orange.Api.Models;
 using Orange.Api.utils;
@@ -9,11 +10,12 @@ namespace Orange.Api.Services;
 
 public class GuildService(ApplicationDbContext _context, ILogger<GuildService> _logger) : IGuildService
 {
-    public async Task<Guild> JoinGuildAsync(ulong id)
+    public async Task<Guild> JoinGuildAsync(GuildJoinDTO guildJoinDto)
     {
         var guild = new Guild
         {
-            GuildId = id
+            GuildId = guildJoinDto.GuildId,
+            GuildName = guildJoinDto.GuildName
         };
 
         _context.Guilds.Add(guild);
@@ -27,6 +29,7 @@ public class GuildService(ApplicationDbContext _context, ILogger<GuildService> _
     {
         var guild = await _context.Guilds
             .FirstOrDefaultAsync(g => g.GuildId == id);
+
         if (guild == null)
         {
             return false;
