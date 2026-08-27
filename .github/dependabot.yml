@@ -5,7 +5,13 @@
 
 version: 2
 updates:
-  - package-ecosystem: "dotnet-sdk" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "nuget"
+    directories: 
+      - "Orange.Api"
+      - "Orange.AppHost"
+      - "Orange.Blazor"
+      - "Orange.Bot"
+      - "Orange.ServiceDefaults"
+      - "xUnit.Tests"
     schedule:
       interval: "weekly"
