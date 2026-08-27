@@ -1,20 +1,20 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using NSubstitute;
 using Orange.Api.utils;
-using Moq;
 using Orange.Api.DTO.Guild;
 using Orange.Api.Models;
 using Orange.Api.Services;
 
 namespace xUnit.Tests.Bot;
 
-public class GuildTests
+public class ApiGuildTests
 {
     private readonly DbContextOptions<ApplicationDbContext> _dbContextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
-        .UseInMemoryDatabase(databaseName: "TestDatabase")
+        .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
         .Options;
-    private readonly Mock<ILogger<GuildService>> _mockLogger = new();
+    private readonly ILogger<GuildService> _nsubLogger = Substitute.For<ILogger<GuildService>>();
 
     private const string guildName = "Test Guild"; // Example guild name
     private const string guildName2 = "Test Guild 2"; // Another example guild name
@@ -29,7 +29,7 @@ public class GuildTests
 
         // Arrange
         await using ApplicationDbContext context = new(_dbContextOptions);
-        GuildService guildService = new(context, _mockLogger.Object);
+        GuildService guildService = new(context, _nsubLogger);
 
 
         // Act
@@ -54,7 +54,7 @@ public class GuildTests
     {
         // Arrange
         await using ApplicationDbContext context = new(_dbContextOptions);
-        GuildService guildService = new(context, _mockLogger.Object);
+        GuildService guildService = new(context, _nsubLogger);
 
         // Act
         await guildService.JoinGuildAsync(new GuildJoinDTO()
@@ -75,7 +75,7 @@ public class GuildTests
     {
         // Arrange
         await using ApplicationDbContext context = new(_dbContextOptions);
-        GuildService guildService = new(context, _mockLogger.Object);
+        GuildService guildService = new(context, _nsubLogger);
 
         // Act
         await guildService.JoinGuildAsync(new GuildJoinDTO()

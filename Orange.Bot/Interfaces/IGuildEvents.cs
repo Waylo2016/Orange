@@ -11,7 +11,7 @@ public interface IGuildEvents
     /// <param name="guild">websocket instance</param>
     /// <returns>A call to the Orange API adding the guild to the Database</returns>
     public Task OnGuildJoining(SocketGuild guild);
-    
+
     /// <summary>
     /// Called when the bot leaves a guild
     /// </summary>

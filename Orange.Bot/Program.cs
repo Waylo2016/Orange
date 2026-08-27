@@ -4,6 +4,7 @@ using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Orange.Bot.Events;
 using Orange.Bot.Interfaces;
 using Orange.Bot.Services;
 
@@ -31,6 +32,7 @@ public class Program
         builder.Services.AddSingleton(sp =>
             new InteractionService(sp.GetRequiredService<DiscordSocketClient>()));
         builder.Services.AddSingleton<IMessageWaiter, MessageWaiter>();
+        builder.Services.AddHttpClient<IGuildEvents, GuildEvents>();
         builder.Services.AddHostedService<SlashCommandRegistrar>();
 
         var host = builder.Build();

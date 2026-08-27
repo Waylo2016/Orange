@@ -3,10 +3,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Interactions;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Orange.Bot.Interfaces;
 
 namespace Orange.Bot;
 
@@ -17,11 +19,13 @@ public class Worker : BackgroundService
     private readonly DiscordSocketClient _client;
     private readonly InteractionService _InteractionService;
     private readonly IServiceProvider _services;
+    private readonly IGuildEvents _guildEvents;
 
     public Worker(
         ILogger<Worker> logger,
         IConfiguration config,
         InteractionService interactionService,
+        IGuildEvents guildEvents,
         IServiceProvider services,
         DiscordSocketClient client)
     {
@@ -30,6 +34,7 @@ public class Worker : BackgroundService
         _InteractionService = interactionService;
         _services = services;
         _client = client;
+        _guildEvents = guildEvents;
 
         _client.Log += LogAsync;
     }
@@ -37,6 +42,8 @@ public class Worker : BackgroundService
     {
         var token = _config["Discord:Api:Key"]
             ?? throw new InvalidOperationException("Discord API key is not configured.");
+        
+        IGuildEvents guildEvents = _services.GetRequiredService<IGuildEvents>();
 
 
         _client.InteractionCreated += async interaction =>
@@ -49,6 +56,10 @@ public class Worker : BackgroundService
         {
             await _client.SetActivityAsync(new Game("Your Mom", ActivityType.Watching));
         };
+
+        
+        _client.JoinedGuild += _guildEvents.OnGuildJoining;
+        _client.LeftGuild += _guildEvents.OnGuildLeave;
 
         await _client.LoginAsync(TokenType.Bot, token);
 
