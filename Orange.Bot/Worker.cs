@@ -5,7 +5,6 @@ using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Orange.Bot.Interfaces;
@@ -17,7 +16,7 @@ public class Worker : BackgroundService
     private readonly ILogger<Worker> _logger;
     private readonly IConfiguration _config;
     private readonly DiscordSocketClient _client;
-    private readonly InteractionService _InteractionService;
+    private readonly InteractionService _interactionService;
     private readonly IServiceProvider _services;
     private readonly IGuildEvents _guildEvents;
 
@@ -31,7 +30,7 @@ public class Worker : BackgroundService
     {
         _logger = logger;
         _config = config;
-        _InteractionService = interactionService;
+        _interactionService = interactionService;
         _services = services;
         _client = client;
         _guildEvents = guildEvents;
@@ -42,14 +41,12 @@ public class Worker : BackgroundService
     {
         var token = _config["Discord:Api:Key"]
             ?? throw new InvalidOperationException("Discord API key is not configured.");
-        
-        IGuildEvents guildEvents = _services.GetRequiredService<IGuildEvents>();
 
 
         _client.InteractionCreated += async interaction =>
         {
             var ctx = new SocketInteractionContext(_client, interaction);
-            await _InteractionService.ExecuteCommandAsync(ctx, _services);
+            await _interactionService.ExecuteCommandAsync(ctx, _services);
         };
 
         _client.Ready += async () =>
@@ -57,9 +54,38 @@ public class Worker : BackgroundService
             await _client.SetActivityAsync(new Game("Your Mom", ActivityType.Watching));
         };
 
+
+        _client.JoinedGuild += guild =>
+        {
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await _guildEvents.OnGuildJoining(guild);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Error handling guild join event for guild {GuildId}", guild.Id);
+                }
+            }, stoppingToken);
+            return Task.CompletedTask;
+        };
         
-        _client.JoinedGuild += _guildEvents.OnGuildJoining;
-        _client.LeftGuild += _guildEvents.OnGuildLeave;
+        _client.LeftGuild += guild =>
+        {
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await _guildEvents.OnGuildLeave(guild);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Error handling guild leave event for guild {GuildId}", guild.Id);
+                }
+            }, stoppingToken);
+            return Task.CompletedTask;
+        };
 
         await _client.LoginAsync(TokenType.Bot, token);
 

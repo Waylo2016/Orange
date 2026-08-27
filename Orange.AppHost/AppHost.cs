@@ -1,6 +1,6 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
-using Aspire.Hosting.Postgres;
+using Microsoft.Extensions.Configuration;
 
 namespace Orange.AppHost;
 
@@ -13,6 +13,14 @@ public class Program
 
         const string stackLabel = "com.docker.compose.project=Orange";
 
+        // test mode config, default = false
+        var testMode = builder.Configuration.GetValue("Test:Enabled", false);
+        var includeApi = !testMode || builder.Configuration.GetValue("Test:IncludeApi", false);
+        var includeBot = !testMode || builder.Configuration.GetValue("Test:IncludeBot", false);
+        var includeDashboard = !testMode || builder.Configuration.GetValue("Test:IncludeDashboard", false);
+
+
+        // parameters
         var discordApiKey = builder.AddParameter("DiscordApiKey", secret: true);
         var discordClientId = builder.AddParameter("DiscordClientId", secret: true);
         var discordDevGuildId = builder.AddParameter("DevGuildId", secret: true);
@@ -22,47 +30,82 @@ public class Program
             .ExcludeFromManifest()
             .WithContainerName("seq")
             .WithContainerRuntimeArgs("--label", stackLabel)
-            .WithLifetime(ContainerLifetime.Persistent)
+            .WithLifetime(ContainerLifetime.Session)
             .WithHttpEndpoint(port: 5341, targetPort: 80, name: "http")
             .WithEnvironment("ACCEPT_EULA", "Y");
 
-        var postgres = builder.AddPostgres("Orange", postgresUsername)
-            .WithPgAdmin(pgAdmin => pgAdmin.WithHostPort(5050)
-                .WithContainerName("pgadmin")
-                .WithContainerRuntimeArgs("--label", stackLabel)
-                .WithLifetime(ContainerLifetime.Persistent))
-            .WithContainerName("postgres")
-            .WithContainerRuntimeArgs("--label", stackLabel)
-            .WithHttpEndpoint(port: 5432, targetPort: 5432, name: "postgres")
-            .WithLifetime(ContainerLifetime.Persistent)
-            .WithDataVolume(isReadOnly: false);
 
-        var postgresdb = postgres.AddDatabase("OrangeDb");
+        // Postgres database
+        IResourceBuilder<PostgresDatabaseResource>? postgresdb = null;
+        if (includeApi)
+        {
+            var postgres = builder.AddPostgres("Orange", postgresUsername)
+                .WithPgAdmin(pgAdmin =>
+                {
+                    pgAdmin.WithHostPort(5050)
+                        .WithContainerRuntimeArgs("--label", stackLabel);
 
-        var api = builder.AddProject<Projects.Orange_Api>("api")
-            .WithHttpEndpoint(8080, name: "http")
-            .WithReference(seq)
-            .WithReference(postgresdb)
-            .WaitFor(postgresdb);
+                    if (!testMode)
+                        pgAdmin.WithContainerName("pgadmin")
+                            .WithLifetime(ContainerLifetime.Persistent);
+                })
+                .WithContainerRuntimeArgs("--label", stackLabel);
+
+
+
+            if (!testMode)
+                postgres.WithContainerName("postgres")
+                    .WithHostPort(5432)
+                    .WithDataVolume()
+                    .WithLifetime(ContainerLifetime.Persistent);
+
+            postgresdb = postgres.AddDatabase("OrangeDb");
+        }
+
+
+        // API
+        IResourceBuilder<ProjectResource>? api = null;
+        if (includeApi)
+        {
+            api = builder.AddProject<Projects.Orange_Api>("orange-api")
+                .WithHttpEndpoint(8080, name: "http")
+                .WithReference(seq);
+
+            if (postgresdb is not null)
+            {
+                api = api.WithReference(postgresdb).WaitFor(postgresdb);
+            }
+        }
 
         // var apiMigrations = api.AddEFMigrations("api-migrations");
 
-        var blazorApp = builder.AddBlazorWasmProject<Projects.Orange_Blazor>("web-dashboard")
-            .WithReference(api)
-            .WithReference(seq);
+        // Dashboard + gateway
+        if (includeDashboard && api is not null)
+        {
+            var blazorApp = builder.AddBlazorWasmProject<Projects.Orange_Blazor>("web-dashboard")
+                .WithReference(api)
+                .WithReference(seq);
 
-        var gateway = builder.AddBlazorGateway("gateway")
-            .WithExternalHttpEndpoints();
+            var gateway = builder.AddBlazorGateway("gateway")
+                .WithExternalHttpEndpoints();
 
-        var bot = builder.AddProject<Projects.Orange_Bot>("discord-bot")
-            .WithEnvironment("Discord__Api__Key", discordApiKey)
-            .WithEnvironment("Discord__Client__Id", discordClientId)
-            .WithEnvironment("Discord__DevGuildId", discordDevGuildId)
-            .WithReference(seq)
-            .WithReference(api.GetEndpoint("http"))
-            .WaitFor(api);
+            gateway.WithBlazorClientApp(blazorApp);
+        }
 
-        gateway.WithBlazorClientApp(blazorApp);
+        // Bot
+        if (includeBot && api is not null)
+        {
+            builder.AddProject<Projects.Orange_Bot>("discord-bot")
+                .WithHttpEndpoint(port: 8081, name: "http")
+                .WithHttpHealthCheck("/health")
+                .WithEnvironment("Discord__Api__Key", discordApiKey)
+                .WithEnvironment("Discord__Client__Id", discordClientId)
+                .WithEnvironment("Discord__DevGuildId", discordDevGuildId)
+                .WithReference(seq)
+                .WithReference(api)
+                .WaitFor(api);
+        }
+
 
         builder.Build().Run();
     }

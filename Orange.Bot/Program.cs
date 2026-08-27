@@ -1,10 +1,16 @@
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Orange.Bot.Events;
+using Orange.Bot.HealthChecks;
 using Orange.Bot.Interfaces;
 using Orange.Bot.Services;
 
@@ -14,29 +20,50 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
-        var builder = Host.CreateApplicationBuilder(args);
+        var builder = WebApplication.CreateBuilder(args);
 
+        // Add logging and configuration
         builder.AddServiceDefaults();
         builder.AddSeqEndpoint(connectionName: "seq");
 
+        
+        // Add services to the container.
         builder.Services.AddHostedService<Worker>();
 
-        builder.Services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig()
+        builder.Services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
         {
             GatewayIntents = GatewayIntents.Guilds
-                                 | GatewayIntents.DirectMessages
-                                 | GatewayIntents.MessageContent
+                             | GatewayIntents.DirectMessages
+                             | GatewayIntents.MessageContent
         }));
 
-        //singletons for the interaction service
         builder.Services.AddSingleton(sp =>
             new InteractionService(sp.GetRequiredService<DiscordSocketClient>()));
         builder.Services.AddSingleton<IMessageWaiter, MessageWaiter>();
-        builder.Services.AddHttpClient<IGuildEvents, GuildEvents>();
         builder.Services.AddHostedService<SlashCommandRegistrar>();
 
-        var host = builder.Build();
-        await host.RunAsync();
+        // Health checks
+        builder.Services.AddHealthChecks()
+            .AddCheck<DiscordConnectionHealthCheck>(
+                "discord",
+                failureStatus: HealthStatus.Unhealthy);
+
+        builder.Services.AddHttpClient<IGuildEvents, GuildEvents>(client =>
+        {
+            client.BaseAddress = new Uri("https+http://api")
+                                 ?? throw new InvalidOperationException("API base URL is not configured.");
+        });
+        
+        var app = builder.Build();
+        var config = app.Services.GetRequiredService<IConfiguration>();
+        foreach (var kvp in config.AsEnumerable().Where(k => k.Key.StartsWith("services:")))
+        {
+            Console.WriteLine($"{kvp.Key} = {kvp.Value}");
+        }
+
+        app.MapDefaultEndpoints();   // uit Orange.ServiceDefaults, mapt /health en /alive
+
+        await app.RunAsync();
 
     }
 }
