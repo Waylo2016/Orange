@@ -65,9 +65,10 @@ public class Worker : BackgroundService
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, "Error handling guild join event for guild {GuildId}", guild.Id);
+                    _logger.LogError(e, "[{Source}] Error handling guild join event for guild {GuildId}", "Bot", guild.Id);
                 }
             }, stoppingToken);
+            _client.JoinedGuild -= _guildEvents.OnGuildJoining;
             return Task.CompletedTask;
         };
         
@@ -81,9 +82,10 @@ public class Worker : BackgroundService
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, "Error handling guild leave event for guild {GuildId}", guild.Id);
+                    _logger.LogError(e, "[{Source}] Error handling guild leave event for guild {GuildId}", "Bot", guild.Id);
                 }
             }, stoppingToken);
+            _client.LeftGuild -= _guildEvents.OnGuildLeave; 
             return Task.CompletedTask;
         };
 

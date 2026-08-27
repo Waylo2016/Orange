@@ -28,6 +28,8 @@ public class Program
 
         
         // Add services to the container.
+
+        builder.Services.AddOpenTelemetry();
         builder.Services.AddHostedService<Worker>();
 
         builder.Services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
@@ -55,11 +57,6 @@ public class Program
         });
         
         var app = builder.Build();
-        var config = app.Services.GetRequiredService<IConfiguration>();
-        foreach (var kvp in config.AsEnumerable().Where(k => k.Key.StartsWith("services:")))
-        {
-            Console.WriteLine($"{kvp.Key} = {kvp.Value}");
-        }
 
         app.MapDefaultEndpoints();   // uit Orange.ServiceDefaults, mapt /health en /alive
 

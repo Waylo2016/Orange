@@ -11,14 +11,13 @@ namespace Orange.Bot.Events;
 
 public class GuildEvents(
     ILogger<GuildEvents> logger,
-    IConfiguration configuration,
     HttpClient httpClient
     ) : IGuildEvents
 {
 
     public async Task OnGuildJoining(IGuild guild)
     {
-        logger.LogInformation($"Joined guild: {guild.Name} ({guild.Id})");
+        logger.LogInformation("[{Source}] Joined guild: {GuildId}, {GuildName}", "Bot", guild.Id, guild.Name);
 
         HttpResponseMessage response = await httpClient.PostAsJsonAsync(
             "/api/v1/Guild/join",
@@ -32,13 +31,13 @@ public class GuildEvents(
         
         if (!response.IsSuccessStatusCode)
         {
-            logger.LogError("Failed to join guild: {GuildId}", guild.Id);
+            logger.LogError("[{Source}] Failed to join guild: {GuildId}", "Bot", guild.Id);
         }
         
     }
     public async Task OnGuildLeave(IGuild guild)
     {
-        logger.LogInformation($"Left guild: {guild.Name} ({guild.Id})");
+        logger.LogInformation("[{Source}] Left guild: {GuildId}, {GuildName}", "Bot", guild.Id, guild.Name);
 
         HttpResponseMessage response = await httpClient.DeleteAsync(
             $"/api/v1/Guild/leave/{guild.Id}"

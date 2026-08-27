@@ -73,7 +73,8 @@ public class BotGuildIntegrationTests(ITestOutputHelper output)
         Assert.Fail($"Bot did not become healthy within the timeout period of {DefaultTimeout.TotalSeconds} seconds. "
             + $"Last API response: {apiResponse.StatusCode}, Last Bot response: {botResponse.StatusCode}");
     }
-    // TODO: figure out on how to implement OnGuildJoining, as this feels like a closed-box integration test,
+    // TODO: figure out on how to implement OnGuildJoining and OnGuildLeave, as this feels like a closed-box integration test,
     // where it goes from the bot to the API. 
     // might have to figure out how to instansiate the AppHost, for Aspire DI injection stuffs
+    // tested for now on 2 separate servers physically instead of programmatically, but would be nice to have a test for this as well.
 }
