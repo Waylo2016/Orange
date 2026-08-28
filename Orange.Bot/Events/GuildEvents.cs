@@ -28,12 +28,12 @@ public class GuildEvents(
             }
         );
         response.EnsureSuccessStatusCode();
-        
+
         if (!response.IsSuccessStatusCode)
         {
             logger.LogError("[{Source}] Failed to join guild: {GuildId}", "Bot", guild.Id);
         }
-        
+
     }
     public async Task OnGuildLeave(IGuild guild)
     {
