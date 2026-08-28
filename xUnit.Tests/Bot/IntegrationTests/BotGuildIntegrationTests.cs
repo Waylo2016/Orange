@@ -23,7 +23,7 @@ public class BotGuildIntegrationTests(ITestOutputHelper output)
     {
         // Arrange
         var cancellationToken = CancellationToken.None;
-        
+
         string discordBot = "discord-bot";
         string orangeApi = "orange-api";
 
@@ -81,7 +81,7 @@ public class BotGuildIntegrationTests(ITestOutputHelper output)
     {
         // Arrange
         var cancellationToken = CancellationToken.None;
-        
+
         const string discordBot = "discord-bot";
         const string orangeApi = "orange-api";
         const string guildName = "Test Guild";
@@ -111,7 +111,7 @@ public class BotGuildIntegrationTests(ITestOutputHelper output)
         var apiClient = app.CreateHttpClient(orangeApi);
 
         int countBefore = await apiClient.GetFromJsonAsync<int>("/api/v1/Guild/count", cancellationToken);
-        
+
         var guildEvents = new GuildEvents(NullLogger<GuildEvents>.Instance, apiClient);
         await guildEvents.OnGuildJoining(substituteGuild);
 
@@ -120,13 +120,13 @@ public class BotGuildIntegrationTests(ITestOutputHelper output)
         // Assert
         Assert.Equal(countBefore + 1, countAfter);
     }
-    
+
     [Fact]
     public async Task TestBotGuildLeave()
     {
         // Arrange
         var cancellationToken = CancellationToken.None;
-        
+
         const string discordBot = "discord-bot";
         const string orangeApi = "orange-api";
         const string guildName = "Test Guild";
@@ -155,11 +155,11 @@ public class BotGuildIntegrationTests(ITestOutputHelper output)
 
         var apiClient = app.CreateHttpClient(orangeApi);
         var guildEvents = new GuildEvents(NullLogger<GuildEvents>.Instance, apiClient);
-        
+
         // first we have to join the guild to ensure it exists in the API before we can leave it
         await guildEvents.OnGuildJoining(substituteGuild);
         int countBefore = await apiClient.GetFromJsonAsync<int>("/api/v1/Guild/count", cancellationToken);
-        
+
         // then we can leave the guild
         await guildEvents.OnGuildLeave(substituteGuild);
 
