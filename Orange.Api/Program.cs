@@ -96,7 +96,7 @@ public class Program
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Orange API v1");
             });
         }
-        
+
         app.UseHttpsRedirection();
         app.UseCors("allowedOrigins");
 

@@ -26,7 +26,7 @@ public class Program
         builder.AddServiceDefaults();
         builder.AddSeqEndpoint(connectionName: "seq");
 
-        
+
         // Add services to the container.
         builder.Services.AddOpenTelemetry();
         builder.Services.AddHostedService<Worker>();
@@ -54,7 +54,7 @@ public class Program
             client.BaseAddress = new Uri("https+http://api")
                                  ?? throw new InvalidOperationException("API base URL is not configured.");
         });
-        
+
         var app = builder.Build();
 
         app.MapDefaultEndpoints();   // from Aspire, maps /health and /alive

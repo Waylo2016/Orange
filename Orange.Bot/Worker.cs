@@ -72,7 +72,7 @@ public class Worker : BackgroundService
             _client.JoinedGuild -= _guildEvents.OnGuildJoining;
             return Task.CompletedTask;
         };
-        
+
         _client.LeftGuild += guild =>
         {
             _ = Task.Run(async () =>
@@ -86,7 +86,7 @@ public class Worker : BackgroundService
                     _logger.LogError(e, "[{Source}] Error handling guild leave event for guild {GuildId}", "Bot", guild.Id);
                 }
             }, stoppingToken);
-            _client.LeftGuild -= _guildEvents.OnGuildLeave; 
+            _client.LeftGuild -= _guildEvents.OnGuildLeave;
             return Task.CompletedTask;
         };
 
