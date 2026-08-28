@@ -88,6 +88,7 @@ public sealed class TestAppHostBuilder
                     $"Test:IncludeApi={_includeApi}",
                     $"Test:IncludeBot={_includeBot}",
                     $"Test:IncludeDashboard={_includeDashboard}",
+                    "Test:StackLabel=com.docker.compose.project=Orange-TEST"
                 ],
                 ct
                 );
@@ -96,6 +97,7 @@ public sealed class TestAppHostBuilder
         appHost.Configuration["Test:IncludeApi"] = _includeApi.ToString();
         appHost.Configuration["Test:IncludeBot"] = _includeBot.ToString();
         appHost.Configuration["Test:IncludeDashboard"] = _includeDashboard.ToString();
+        appHost.Configuration["Test:StackLabel"] = "com.docker.compose.project=Orange-TEST";
 
         if (_output is not null)
         {
