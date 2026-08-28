@@ -55,6 +55,7 @@ public class Worker : BackgroundService
         };
 
 
+        // Handle guild join and leave events
         _client.JoinedGuild += guild =>
         {
             _ = Task.Run(async () =>
