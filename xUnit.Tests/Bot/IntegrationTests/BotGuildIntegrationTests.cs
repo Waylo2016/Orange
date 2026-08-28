@@ -1,7 +1,5 @@
 ﻿using System.Net.Http.Json;
 using Discord;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Orange.Bot.Events;
@@ -12,9 +10,6 @@ namespace xUnit.Tests.Bot.IntegrationTests;
 
 public class BotGuildIntegrationTests(ITestOutputHelper output)
 {
-    private ILogger<GuildEvents> _logger;
-    private IConfiguration _configuration;
-    private HttpClient _httpClient;
     private static readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(10);
 
 
