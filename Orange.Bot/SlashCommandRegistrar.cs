@@ -50,8 +50,8 @@ public class SlashCommandRegistrar : IHostedService
         var devGuildId = _config.GetValue<ulong?>("Discord:DevGuildId");
         if (devGuildId.HasValue)
         {
-            await _interactionService.RegisterCommandsToGuildAsync(devGuildId.Value);
-            _logger.LogInformation("[{Source}] | Slash commands registered to guild {GuildId}", "SlashCommandRegistrar", devGuildId.Value);
+            await _interactionService.RegisterCommandsGloballyAsync();
+            _logger.LogInformation("[{Source}] | Slash commands registered globally", "SlashCommandRegistrar");
         }
         else
         {

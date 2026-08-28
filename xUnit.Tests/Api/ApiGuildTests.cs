@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -7,7 +6,7 @@ using Orange.Api.DTO.Guild;
 using Orange.Api.Models;
 using Orange.Api.Services;
 
-namespace xUnit.Tests.Bot;
+namespace xUnit.Tests.Api;
 
 public class ApiGuildTests
 {

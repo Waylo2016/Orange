@@ -18,6 +18,7 @@ public class Program
         var includeApi = !testMode || builder.Configuration.GetValue("Test:IncludeApi", false);
         var includeBot = !testMode || builder.Configuration.GetValue("Test:IncludeBot", false);
         var includeDashboard = !testMode || builder.Configuration.GetValue("Test:IncludeDashboard", false);
+        var stackLabelFromConfig = testMode ? builder.Configuration.GetValue("Test:StackLabel", stackLabel) : stackLabel;
 
 
         // parameters
@@ -29,7 +30,7 @@ public class Program
         var seq = builder.AddSeq("seq")
             .ExcludeFromManifest()
             .WithContainerName("seq")
-            .WithContainerRuntimeArgs("--label", stackLabel)
+            .WithContainerRuntimeArgs("--label", stackLabelFromConfig)
             .WithLifetime(ContainerLifetime.Session)
             .WithHttpEndpoint(port: 5341, targetPort: 80, name: "http")
             .WithEnvironment("ACCEPT_EULA", "Y");
@@ -43,13 +44,13 @@ public class Program
                 .WithPgAdmin(pgAdmin =>
                 {
                     pgAdmin.WithHostPort(5050)
-                        .WithContainerRuntimeArgs("--label", stackLabel);
+                        .WithContainerRuntimeArgs("--label", stackLabelFromConfig);
 
                     if (!testMode)
                         pgAdmin.WithContainerName("pgadmin")
                             .WithLifetime(ContainerLifetime.Persistent);
                 })
-                .WithContainerRuntimeArgs("--label", stackLabel);
+                .WithContainerRuntimeArgs("--label", stackLabelFromConfig);
 
 
 
@@ -73,11 +74,15 @@ public class Program
 
             if (postgresdb is not null)
             {
-                api = api.WithReference(postgresdb).WaitFor(postgresdb);
+                var apiMigrations = builder.AddProject<Projects.Orange_Api_MigrationService>("api-migrations")
+                    .WithReference(postgresdb)
+                    .WaitFor(postgresdb);
+
+                api = api.WithReference(postgresdb)
+                    .WaitFor(postgresdb)
+                    .WaitForCompletion(apiMigrations);
             }
         }
-
-        // var apiMigrations = api.AddEFMigrations("api-migrations");
 
         // Dashboard + gateway
         if (includeDashboard && api is not null)
