@@ -27,8 +27,6 @@ public class Program
         builder.AddNpgsqlDbContext<ApplicationDbContext>(connectionName: "OrangeDb");
 
 
-
-
         builder.Services.AddCors(options =>
         {
             options.AddPolicy(name: "allowedOrigins",
