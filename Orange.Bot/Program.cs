@@ -28,7 +28,6 @@ public class Program
 
         
         // Add services to the container.
-
         builder.Services.AddOpenTelemetry();
         builder.Services.AddHostedService<Worker>();
 
@@ -58,7 +57,7 @@ public class Program
         
         var app = builder.Build();
 
-        app.MapDefaultEndpoints();   // uit Orange.ServiceDefaults, mapt /health en /alive
+        app.MapDefaultEndpoints();   // from Aspire, maps /health and /alive
 
         await app.RunAsync();
 
