@@ -79,9 +79,6 @@ public class Program
             });
             string xmlFilename = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-            
-            options.DocumentFilter<RemoveSchemasFilter>();
-            
         });
 
         //register routeoptions for unsigned params
