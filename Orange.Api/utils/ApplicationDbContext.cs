@@ -6,15 +6,33 @@ namespace Orange.Api.utils;
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
     public DbSet<Guild> Guilds { get; set; }
+    public DbSet<GuildQuestion> GuildQuestions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Configure the Guild entity, it has no relationships, so we only need to configure the PK and the required field.
+        // Configure the Guild entity
         modelBuilder.Entity<Guild>()
             .HasKey(g => g.Id);
 
         modelBuilder.Entity<Guild>()
             .Property(g => g.GuildId)
-            .IsRequired();
+            .IsRequired()
+            .ValueGeneratedNever();
+
+        // Configure the GuildQuestion entity.
+        modelBuilder.Entity<GuildQuestion>()
+            .HasKey(gq => gq.GuildId);
+        
+        modelBuilder.Entity<GuildQuestion>()
+            .Property(gq => gq.GuildId)
+            .IsRequired()
+            .ValueGeneratedNever();
+
+        // 1-* relationship between Guild and GuildQuestion
+        modelBuilder.Entity<Guild>()
+            .HasMany(g => g.GuildQuestions)
+            .WithOne(gq => gq.Guild)
+            .HasPrincipalKey(gq => gq.GuildId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
