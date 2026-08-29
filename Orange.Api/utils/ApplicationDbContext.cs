@@ -21,7 +21,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         // Configure the GuildQuestion entity.
         modelBuilder.Entity<GuildQuestion>()
-            .HasKey(gq => gq.GuildId);
+            .HasAlternateKey(gq => gq.GuildId);
         
         modelBuilder.Entity<GuildQuestion>()
             .Property(gq => gq.GuildId)
@@ -32,7 +32,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<Guild>()
             .HasMany(g => g.GuildQuestions)
             .WithOne(gq => gq.Guild)
-            .HasPrincipalKey(gq => gq.GuildId)
+            .HasPrincipalKey(g => g.GuildId)
+            .HasForeignKey(gq => gq.GuildId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
