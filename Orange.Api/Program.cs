@@ -1,9 +1,10 @@
 using System;
 using System.IO;
+using System.Linq;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi;
@@ -11,6 +12,7 @@ using Orange.Api.Constraints;
 using Orange.Api.Interfaces;
 using Orange.Api.Services;
 using Orange.Api.utils;
+using Orange.Api.utils.Swagger;
 
 
 namespace Orange.Api;
@@ -77,6 +79,9 @@ public class Program
             });
             string xmlFilename = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+            
+            options.DocumentFilter<RemoveSchemasFilter>();
+            
         });
 
         //register routeoptions for unsigned params
@@ -95,13 +100,16 @@ public class Program
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Orange API v1");
             });
+            
+            app.MapGet("/", () => Results.Redirect("/swagger/index.html"))
+                .ExcludeFromDescription();
         }
 
         app.UseHttpsRedirection();
         app.UseCors("allowedOrigins");
 
         app.UseAuthorization();
-
+        
         app.MapDefaultEndpoints();
         app.MapControllers();
 
