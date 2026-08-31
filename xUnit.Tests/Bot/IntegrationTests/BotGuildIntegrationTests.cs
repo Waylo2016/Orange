@@ -33,7 +33,7 @@ public class BotGuildIntegrationTests(ITestOutputHelper output)
 
 
         await app.ResourceNotifications.WaitForResourceHealthyAsync(
-            discordBot, cancellationToken)  
+            discordBot, cancellationToken)
             .WaitAsync(DefaultTimeout, cancellationToken);
 
         await app.ResourceNotifications.WaitForResourceHealthyAsync(

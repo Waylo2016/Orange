@@ -58,7 +58,7 @@ public class GuildQuestionsController(IGuildQuestions guildQuestions) : Controll
             GuildId = guildId,
             QuestionOrder = id
         };
-        
+
         try
         {
             var question = await guildQuestions.GetGuildQuestionByIdAsync(guildQuestionOrderGetDto);
@@ -69,8 +69,8 @@ public class GuildQuestionsController(IGuildQuestions guildQuestions) : Controll
             return NotFound(e.Message);
         }
     }
-    
-    
+
+
     /// <summary>
     /// invoked wanting to create a new question
     /// </summary>
@@ -85,7 +85,7 @@ public class GuildQuestionsController(IGuildQuestions guildQuestions) : Controll
         {
             var createdQuestion = await guildQuestions.CreateGuildQuestionAsync(guildQuestion);
             return CreatedAtAction(
-                nameof(GetGuildQuestionById), 
+                nameof(GetGuildQuestionById),
                 new
                 {
                     countOrder = createdQuestion.QuestionOrder,
@@ -123,7 +123,7 @@ public class GuildQuestionsController(IGuildQuestions guildQuestions) : Controll
             return BadRequest(e.Message);
         }
     }
-    
+
     /// <summary>
     /// invoked wanting to delete an existing question
     /// </summary>
@@ -135,6 +135,6 @@ public class GuildQuestionsController(IGuildQuestions guildQuestions) : Controll
     {
         bool result = await guildQuestions.DeleteGuildQuestionAsync(guildQuestionOrderDeleteDto);
         return result ? NoContent() : Problem("An unexpected error occurred while trying to delete the guild question.");
-        
+
     }
 }

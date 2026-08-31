@@ -40,13 +40,13 @@ public class GuildQuestionService(ApplicationDbContext _context, ILogger<GuildQu
     {
         var guildQuestion = await _context.GuildQuestions
             .FirstOrDefaultAsync(gq => gq.GuildId == guildQuestionOrderDeleteDto.GuildId && gq.QuestionOrder == guildQuestionOrderDeleteDto.QuestionOrder);
-        
+
         if (guildQuestion == null)
         {
             _logger.LogWarning("Guild question with guild ID {Id} and question order {Order} not found.", guildQuestionOrderDeleteDto.GuildId, guildQuestionOrderDeleteDto.QuestionOrder);
             throw new NotFoundException($"Guild question with ID {guildQuestionOrderDeleteDto.GuildId} not found.");
         }
-        
+
         return guildQuestion;
     }
 
@@ -79,13 +79,13 @@ public class GuildQuestionService(ApplicationDbContext _context, ILogger<GuildQu
     {
         var existingGuildQuestion = await _context.GuildQuestions
             .FirstOrDefaultAsync(gq => gq.GuildId == guildQuestion.GuildId && gq.QuestionOrder == guildQuestion.OldQuestionOrder);
-        
+
         if (existingGuildQuestion == null)
         {
             _logger.LogWarning("Guild question with guild ID {Id} and question order {Order} not found.", guildQuestion.GuildId, guildQuestion.OldQuestionOrder);
             throw new NotFoundException($"Guild question with ID {guildQuestion.GuildId} not found.");
         }
-        
+
         var newGuildQuestion = new GuildQuestion
         {
             GuildId = guildQuestion.GuildId,
@@ -108,7 +108,7 @@ public class GuildQuestionService(ApplicationDbContext _context, ILogger<GuildQu
     {
         var existingGuildQuestion = await _context.GuildQuestions
             .FirstOrDefaultAsync(gq => gq.GuildId == guildQuestionOrderDeleteDto.GuildId && gq.QuestionOrder == guildQuestionOrderDeleteDto.QuestionOrder);
-        
+
         if (existingGuildQuestion == null)
         {
             return false;
