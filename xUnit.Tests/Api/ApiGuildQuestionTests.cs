@@ -275,7 +275,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture, ITestOutputHelpe
         // Assert
         Assert.Empty(questionsList);
     }
-    
+
     [Fact]
     public async Task TestQuestionUpdate()
     {
@@ -313,5 +313,5 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture, ITestOutputHelpe
             Assert.Equal(questionOrder1, updatedQuestion.QuestionOrder);
         });
     }
-    
+
 }

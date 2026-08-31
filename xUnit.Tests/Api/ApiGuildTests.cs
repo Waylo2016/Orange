@@ -66,7 +66,7 @@ public class ApiGuildTests
 
         // Assert
         Assert.True(result);
-        var guild = await context.Guilds.FirstOrDefaultAsync(g => g.GuildId == guildId);
+        var guild = await context.Guilds.FirstOrDefaultAsync(g => g.GuildId == guildId, cancellationToken: TestContext.Current.CancellationToken);
         Assert.Null(guild);
     }
 

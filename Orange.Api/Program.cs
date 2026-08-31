@@ -98,7 +98,7 @@ public class Program
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Orange API v1");
             });
-            
+
             app.MapGet("/", () => Results.Redirect("/swagger/index.html"))
                 .ExcludeFromDescription();
         }
@@ -107,7 +107,7 @@ public class Program
         app.UseCors("allowedOrigins");
 
         app.UseAuthorization();
-        
+
         app.MapDefaultEndpoints();
         app.MapControllers();
 

@@ -67,7 +67,7 @@ public sealed class TestAppHostBuilder
         _timeout = timeout;
         return this;
     }
-    
+
     public TestAppHostBuilder StackLabelSuffix(string suffix)
     {
         _stackLabelSuffix = suffix;
