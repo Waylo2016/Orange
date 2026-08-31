@@ -53,7 +53,7 @@ jobs:
       - name: Test
         run: |
           if [ -f Orange.UnitTests/Orange.UnitTests.csproj ]; then
-            dotnet test Orange.UnitTests/Orange.UnitTests.csproj --no-build --configuration Release
+            dotnet test --project Orange.UnitTests/Orange.UnitTests.csproj --no-build --configuration Release
           else
             echo "No test project found yet, skipping dotnet test."
           fi
