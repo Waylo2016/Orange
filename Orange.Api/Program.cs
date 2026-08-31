@@ -1,9 +1,10 @@
 using System;
 using System.IO;
 using Asp.Versioning;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi;
@@ -12,9 +13,9 @@ using Orange.Api.Interfaces;
 using Orange.Api.Services;
 using Orange.Api.utils;
 
-
 namespace Orange.Api;
 
+[UsedImplicitly]
 public class Program
 {
     public static void Main(string[] args)
@@ -39,7 +40,9 @@ public class Program
             });
         });
 
+        // Register services for dependency injection
         builder.Services.AddScoped<IGuildService, GuildService>();
+        builder.Services.AddScoped<IGuildQuestions, GuildQuestionService>();
 
 
         // Set up versioning for Swagger
@@ -95,6 +98,9 @@ public class Program
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Orange API v1");
             });
+
+            app.MapGet("/", () => Results.Redirect("/swagger/index.html"))
+                .ExcludeFromDescription();
         }
 
         app.UseHttpsRedirection();

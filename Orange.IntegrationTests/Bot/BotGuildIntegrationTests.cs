@@ -3,10 +3,9 @@ using Discord;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Orange.Bot.Events;
-using Xunit.Abstractions;
-using xUnit.Tests.Helpers;
+using Orange.IntegrationTests.Helpers;
 
-namespace xUnit.Tests.Bot.IntegrationTests;
+namespace Orange.IntegrationTests.Bot;
 
 public class BotGuildIntegrationTests(ITestOutputHelper output)
 {
@@ -25,6 +24,7 @@ public class BotGuildIntegrationTests(ITestOutputHelper output)
         var app = await new TestAppHostBuilder()
             .WithBot()
             .LogTo(output)
+            .StackLabelSuffix(nameof(TestBotAndApiHealth))
             .WithTimeout(DefaultTimeout)
             .BuildAsync(cancellationToken);
 
@@ -91,6 +91,7 @@ public class BotGuildIntegrationTests(ITestOutputHelper output)
         var app = await new TestAppHostBuilder()
             .WithBot()
             .LogTo(output)
+            .StackLabelSuffix(nameof(TestBotGuildJoin))
             .WithTimeout(DefaultTimeout)
             .BuildAsync(cancellationToken);
 
@@ -136,6 +137,7 @@ public class BotGuildIntegrationTests(ITestOutputHelper output)
         var app = await new TestAppHostBuilder()
             .WithBot()
             .LogTo(output)
+            .StackLabelSuffix(nameof(TestBotGuildJoin))
             .WithTimeout(DefaultTimeout)
             .BuildAsync(cancellationToken);
 

@@ -6,7 +6,7 @@ using Orange.Api.DTO.Guild;
 using Orange.Api.Models;
 using Orange.Api.Services;
 
-namespace xUnit.Tests.Api;
+namespace Orange.UnitTests.Api;
 
 public class ApiGuildTests
 {
@@ -37,9 +37,10 @@ public class ApiGuildTests
             GuildId = guildId,
             GuildName = "Test Guild"
         });
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Assert
-        Guild? guild = await context.Guilds.FirstOrDefaultAsync(g => g.GuildId == guildId);
+        Guild? guild = await context.Guilds.FirstOrDefaultAsync(g => g.GuildId == guildId, cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.NotNull(guild);
         Assert.Equal(guildId, guild.GuildId);
@@ -65,7 +66,7 @@ public class ApiGuildTests
 
         // Assert
         Assert.True(result);
-        var guild = await context.Guilds.FirstOrDefaultAsync(g => g.GuildId == guildId);
+        var guild = await context.Guilds.FirstOrDefaultAsync(g => g.GuildId == guildId, cancellationToken: TestContext.Current.CancellationToken);
         Assert.Null(guild);
     }
 

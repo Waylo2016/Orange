@@ -1,9 +1,8 @@
 ﻿using Aspire.Hosting;
 using Microsoft.Extensions.Logging;
 using Projects;
-using Xunit.Abstractions;
 
-namespace xUnit.Tests.Helpers;
+namespace Orange.IntegrationTests.Helpers;
 
 /// <summary>
 /// A builder class for creating a test application host with optional components such as API, Bot, and Dashboard. This class allows for configuring the test environment and logging output for integration tests.
@@ -15,6 +14,7 @@ public sealed class TestAppHostBuilder
     private bool _includeDashboard;
     private ITestOutputHelper? _output;
     private TimeSpan _timeout;
+    private string? _stackLabelSuffix;
 
     /// <summary>
     /// Includes the API component in the test application host.
@@ -68,6 +68,12 @@ public sealed class TestAppHostBuilder
         return this;
     }
 
+    public TestAppHostBuilder StackLabelSuffix(string suffix)
+    {
+        _stackLabelSuffix = suffix;
+        return this;
+    }
+
     /// <summary>
     /// Builds and starts the test application host asynchronously,
     /// returning a <see cref="DistributedApplication"/> instance.
@@ -88,7 +94,7 @@ public sealed class TestAppHostBuilder
                     $"Test:IncludeApi={_includeApi}",
                     $"Test:IncludeBot={_includeBot}",
                     $"Test:IncludeDashboard={_includeDashboard}",
-                    "Test:StackLabel=com.docker.compose.project=Orange-TEST"
+                    $"Test:StackLabel=com.docker.compose.project=Orange-TEST-{_stackLabelSuffix}"
                 ],
                 ct
                 );
@@ -97,7 +103,7 @@ public sealed class TestAppHostBuilder
         appHost.Configuration["Test:IncludeApi"] = _includeApi.ToString();
         appHost.Configuration["Test:IncludeBot"] = _includeBot.ToString();
         appHost.Configuration["Test:IncludeDashboard"] = _includeDashboard.ToString();
-        appHost.Configuration["Test:StackLabel"] = "com.docker.compose.project=Orange-TEST";
+        appHost.Configuration["Test:StackLabel"] = $"com.docker.compose.project=Orange-TEST-{_stackLabelSuffix}";
 
         if (_output is not null)
         {

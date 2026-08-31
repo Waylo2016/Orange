@@ -51,7 +51,7 @@ public class Program
 
         builder.Services.AddHttpClient<IGuildEvents, GuildEvents>(client =>
         {
-            client.BaseAddress = new Uri("https+http://api")
+            client.BaseAddress = new Uri("https+http://orange-api")
                                  ?? throw new InvalidOperationException("API base URL is not configured.");
         });
 

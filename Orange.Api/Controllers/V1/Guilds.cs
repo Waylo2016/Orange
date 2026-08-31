@@ -20,8 +20,8 @@ public class GuildController(IGuildService guildService) : ControllerBase
     /// <param name="guildJoinDto">the data required to join the guild</param>
     /// <returns>An object representing the joined guild</returns>
     [HttpPost("join")]
-    [ProducesResponseType(typeof(Guild), StatusCodes.Status201Created)]
-    public async Task<ActionResult<Guild>> GuildJoin([FromBody] GuildJoinDTO guildJoinDto)
+    [ProducesResponseType(typeof(GuildJoinDTO), StatusCodes.Status201Created)]
+    public async Task<ActionResult<GuildJoinDTO>> GuildJoin([FromBody] GuildJoinDTO guildJoinDto)
     {
         Guild guild = await guildService.JoinGuildAsync(guildJoinDto);
 
@@ -32,7 +32,11 @@ public class GuildController(IGuildService guildService) : ControllerBase
                 id = guild.GuildId,
                 name = guild.GuildName
             },
-            value: guild);
+            value: new GuildJoinDTO
+            {
+                GuildId = guild.GuildId,
+                GuildName = guild.GuildName
+            });
     }
 
     /// <summary>

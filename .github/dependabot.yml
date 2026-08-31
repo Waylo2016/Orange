@@ -12,6 +12,7 @@ updates:
       - "Orange.Blazor"
       - "Orange.Bot"
       - "Orange.ServiceDefaults"
-      - "xUnit.Tests"
+      - "Orange.UnitTests"
+      - "Orange.IntegrationTests"
     schedule:
       interval: "weekly"

@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		LICENSE = LICENSE
+		global.json = global.json
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orange.Blazor", "Orange.Blazor\Orange.Blazor.csproj", "{6EC4898E-E104-4BB1-B902-F355C6D7F47E}"
@@ -19,7 +20,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orange.Bot", "Orange.Bot\Or
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orange.Api", "Orange.Api\Orange.Api.csproj", "{7C397BF8-5494-48B8-813D-927EA5E45132}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xUnit.Tests", "xUnit.Tests\xUnit.Tests.csproj", "{E70A199B-B1B6-4E33-AEF9-F503F09DE288}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orange.UnitTests", "Orange.UnitTests\Orange.UnitTests.csproj", "{E70A199B-B1B6-4E33-AEF9-F503F09DE288}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orange.IntegrationTests", "Orange.IntegrationTests\Orange.IntegrationTests.csproj", "{AEC16C09-A674-4446-AE56-3C507FA58B5C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orange.Api.MigrationService", "Orange.Api.MigrationService\Orange.Api.MigrationService.csproj", "{1F3C1698-EBAE-439F-9C6A-C65D03C2F17B}"
 EndProject
@@ -105,6 +108,18 @@ Global
 		{E70A199B-B1B6-4E33-AEF9-F503F09DE288}.Release|x64.Build.0 = Release|Any CPU
 		{E70A199B-B1B6-4E33-AEF9-F503F09DE288}.Release|x86.ActiveCfg = Release|Any CPU
 		{E70A199B-B1B6-4E33-AEF9-F503F09DE288}.Release|x86.Build.0 = Release|Any CPU
+		{AEC16C09-A674-4446-AE56-3C507FA58B5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEC16C09-A674-4446-AE56-3C507FA58B5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEC16C09-A674-4446-AE56-3C507FA58B5C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AEC16C09-A674-4446-AE56-3C507FA58B5C}.Debug|x64.Build.0 = Debug|Any CPU
+		{AEC16C09-A674-4446-AE56-3C507FA58B5C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AEC16C09-A674-4446-AE56-3C507FA58B5C}.Debug|x86.Build.0 = Debug|Any CPU
+		{AEC16C09-A674-4446-AE56-3C507FA58B5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEC16C09-A674-4446-AE56-3C507FA58B5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEC16C09-A674-4446-AE56-3C507FA58B5C}.Release|x64.ActiveCfg = Release|Any CPU
+		{AEC16C09-A674-4446-AE56-3C507FA58B5C}.Release|x64.Build.0 = Release|Any CPU
+		{AEC16C09-A674-4446-AE56-3C507FA58B5C}.Release|x86.ActiveCfg = Release|Any CPU
+		{AEC16C09-A674-4446-AE56-3C507FA58B5C}.Release|x86.Build.0 = Release|Any CPU
 		{1F3C1698-EBAE-439F-9C6A-C65D03C2F17B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1F3C1698-EBAE-439F-9C6A-C65D03C2F17B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F3C1698-EBAE-439F-9C6A-C65D03C2F17B}.Debug|x64.ActiveCfg = Debug|Any CPU

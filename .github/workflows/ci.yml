@@ -52,11 +52,9 @@ jobs:
 
       - name: Test
         run: |
-          if git ls-files -- '*Tests.csproj' '*.Tests/*.csproj' | grep -q .; then
-            dotnet test Orange.sln --no-build --configuration Release \
-              --filter "FullyQualifiedName!~IntegrationTests" \
-              --logger "console;verbosity=normal"
+          if [ -f Orange.UnitTests/Orange.UnitTests.csproj ]; then
+            dotnet test --project Orange.UnitTests/Orange.UnitTests.csproj --no-build --configuration Release
           else
-            echo "No test projects found yet, skipping dotnet test."
+            echo "No test project found yet, skipping dotnet test."
           fi
         shell: bash
