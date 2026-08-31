@@ -15,7 +15,7 @@ using Orange.Api.utils;
 
 namespace Orange.Api;
 
-[UsedImplicitly]
+
 public class Program
 {
     public static void Main(string[] args)
