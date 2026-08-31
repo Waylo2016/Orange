@@ -54,8 +54,7 @@ jobs:
         run: |
           if git ls-files -- '*Tests.csproj' '*.Tests/*.csproj' | grep -q .; then
             dotnet test Orange.sln --no-build --configuration Release \
-              --filter "FullyQualifiedName!~IntegrationTests" \
-              --logger "console;verbosity=normal"
+              --filter-not-namespace "*IntegrationTests*"
           else
             echo "No test projects found yet, skipping dotnet test."
           fi
