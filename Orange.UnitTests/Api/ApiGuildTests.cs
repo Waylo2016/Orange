@@ -6,7 +6,7 @@ using Orange.Api.DTO.Guild;
 using Orange.Api.Models;
 using Orange.Api.Services;
 
-namespace xUnit.Tests.Api;
+namespace Orange.UnitTests.Api;
 
 public class ApiGuildTests
 {

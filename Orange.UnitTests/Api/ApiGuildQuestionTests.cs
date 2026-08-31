@@ -8,9 +8,9 @@ using Orange.Api.DTO.GuildQuestion;
 using Orange.Api.Models;
 using Orange.Api.Services;
 using Orange.Api.utils;
-using xUnit.Tests.Helpers;
+using Orange.UnitTests.Helpers;
 
-namespace xUnit.Tests.Api;
+namespace Orange.UnitTests.Api;
 
 public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
     : IClassFixture<SqliteFixture>, IAsyncLifetime

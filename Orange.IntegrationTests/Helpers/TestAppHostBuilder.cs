@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Projects;
 
-namespace xUnit.Tests.Helpers;
+namespace Orange.IntegrationTests.Helpers;
 
 /// <summary>
 /// A builder class for creating a test application host with optional components such as API, Bot, and Dashboard. This class allows for configuring the test environment and logging output for integration tests.

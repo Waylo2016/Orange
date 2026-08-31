@@ -2,7 +2,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Orange.Api.utils;
 
-namespace xUnit.Tests.Helpers;
+namespace Orange.UnitTests.Helpers;
 
 /// <summary>
 /// Backs <see cref="ApplicationDbContext"/> with a SQLite in-memory database instead of a
