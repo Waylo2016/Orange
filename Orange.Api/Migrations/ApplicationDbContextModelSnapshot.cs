@@ -62,7 +62,7 @@ namespace Orange.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasAlternateKey("GuildId");
+                    b.HasIndex("GuildId");
 
                     b.ToTable("GuildQuestions");
                 });

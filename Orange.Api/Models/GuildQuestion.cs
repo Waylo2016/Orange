@@ -1,4 +1,6 @@
-﻿namespace Orange.Api.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Orange.Api.Models;
 
 public class GuildQuestion
 {
@@ -10,5 +12,6 @@ public class GuildQuestion
 
     public int QuestionOrder { get; set; }
 
+    [JsonIgnore]
     public Guild Guild { get; set; } = null!;
 }

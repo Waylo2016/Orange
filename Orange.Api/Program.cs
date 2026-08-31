@@ -1,7 +1,7 @@
 using System;
 using System.IO;
-using System.Linq;
 using Asp.Versioning;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -12,11 +12,10 @@ using Orange.Api.Constraints;
 using Orange.Api.Interfaces;
 using Orange.Api.Services;
 using Orange.Api.utils;
-using Orange.Api.utils.Swagger;
-
 
 namespace Orange.Api;
 
+[UsedImplicitly]
 public class Program
 {
     public static void Main(string[] args)
@@ -41,7 +40,9 @@ public class Program
             });
         });
 
+        // Register services for dependency injection
         builder.Services.AddScoped<IGuildService, GuildService>();
+        builder.Services.AddScoped<IGuildQuestions, GuildQuestionService>();
 
 
         // Set up versioning for Swagger

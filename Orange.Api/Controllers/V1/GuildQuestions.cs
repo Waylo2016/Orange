@@ -28,7 +28,7 @@ public class GuildQuestionsController(IGuildQuestions guildQuestions) : Controll
     [HttpGet("questions/guild")]
     [ProducesResponseType(typeof(List<GuildQuestion>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> GetGuildQuestions([FromBody] GuildIdDTO guildIdDto)
+    public async Task<ActionResult<List<GuildQuestionGetDto>>> GetGuildQuestions([FromBody] GuildIdDTO guildIdDto)
     {
         try
         {
@@ -41,24 +41,27 @@ public class GuildQuestionsController(IGuildQuestions guildQuestions) : Controll
         }
 
     }
-    
+
     /// <summary>
-    /// invoked wanting to see a specific guild question by its ID
+    /// invoked wanting to get a specific guild question by its ID
     /// </summary>
-    /// <param name="id">the ID of the specific question to retrieve</param>
+    /// <param name="guildId">The ID of the guild</param>
+    /// <param name="id">The order of the question within the guild</param>
     /// <returns>the specified question</returns>
-    [HttpGet("questions/{id:int}")]
-    [ProducesResponseType(typeof(GuildQuestion), StatusCodes.Status200OK)]
+    [HttpGet("questions/guild/{guildId:ulong}/questionOrder/{guestionOrder:int}")]
+    [ProducesResponseType(typeof(GuildQuestionGetDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<GuildQuestion>> GetGuildQuestionById(int id)
+    public async Task<ActionResult<GuildQuestionGetDto>> GetGuildQuestionById([FromRoute] ulong guildId, [FromRoute] int id)
     {
+        var guildQuestionOrderGetDto = new GuildQuestionOrderDeleteDto
+        {
+            GuildId = guildId,
+            QuestionOrder = id
+        };
+        
         try
         {
-            var question = await guildQuestions.GetGuildQuestionByIdAsync(id);
-            if (question == null)
-            {
-                return NotFound($"Guild question with ID {id} not found.");
-            }
+            var question = await guildQuestions.GetGuildQuestionByIdAsync(guildQuestionOrderGetDto);
             return Ok(question);
         }
         catch (NotFoundException e)
@@ -76,23 +79,29 @@ public class GuildQuestionsController(IGuildQuestions guildQuestions) : Controll
     [HttpPost("questions/create")]
     [ProducesResponseType(typeof(GuildQuestionUpdateDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<GuildQuestionUpdateDto>> CreateGuildQuestion([FromBody] GuildQuestionUpdateDto guildQuestion)
+    public async Task<ActionResult<GuildQuestionUpdateDto>> CreateGuildQuestion([FromBody] GuildQuestionCreateDto guildQuestion)
     {
         try
         {
             var createdQuestion = await guildQuestions.CreateGuildQuestionAsync(guildQuestion);
-            return CreatedAtAction(nameof(GetGuildQuestionById), new { id = createdQuestion.Id }, createdQuestion);
+            return CreatedAtAction(
+                nameof(GetGuildQuestionById), 
+                new
+                {
+                    countOrder = createdQuestion.QuestionOrder,
+                    guildId = createdQuestion.GuildId
+                }, createdQuestion);
         }
         catch (Exception e)
         {
             return BadRequest(e.Message);
         }
     }
-    
+
     /// <summary>
     /// invoked wanting to update an existing question
     /// </summary>
-    /// <param name="guildQuestion">The question to update</param>
+    /// <param name="guildQuestion">The updated question</param>
     /// <returns>The updated question</returns>
     [HttpPut("questions/update")]
     [ProducesResponseType(typeof(GuildQuestionUpdateDto), StatusCodes.Status200OK)]
@@ -118,13 +127,13 @@ public class GuildQuestionsController(IGuildQuestions guildQuestions) : Controll
     /// <summary>
     /// invoked wanting to delete an existing question
     /// </summary>
-    /// <param name="id">The ID of the question to delete</param>
+    /// <param name="guildQuestionOrderDeleteDto">The information of the question to delete</param>
     /// <returns>True if the question was deleted, false otherwise</returns>
-    [HttpDelete("questions/delete/{id}")]
+    [HttpDelete("questions/delete")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<ActionResult<bool>> DeleteGuildQuestion(int id)
+    public async Task<ActionResult<bool>> DeleteGuildQuestion([FromBody] GuildQuestionOrderDeleteDto guildQuestionOrderDeleteDto)
     {
-        bool result = await guildQuestions.DeleteGuildQuestionAsync(id);
+        bool result = await guildQuestions.DeleteGuildQuestionAsync(guildQuestionOrderDeleteDto);
         return result ? NoContent() : Problem("An unexpected error occurred while trying to delete the guild question.");
         
     }

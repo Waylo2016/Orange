@@ -2,5 +2,5 @@
 
 public class GuildIdDTO
 {
-
+    public ulong GuildId { get; set; }
 }

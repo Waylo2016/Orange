@@ -37,9 +37,10 @@ public class ApiGuildTests
             GuildId = guildId,
             GuildName = "Test Guild"
         });
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Assert
-        Guild? guild = await context.Guilds.FirstOrDefaultAsync(g => g.GuildId == guildId);
+        Guild? guild = await context.Guilds.FirstOrDefaultAsync(g => g.GuildId == guildId, cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.NotNull(guild);
         Assert.Equal(guildId, guild.GuildId);

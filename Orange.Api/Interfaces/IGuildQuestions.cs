@@ -17,28 +17,28 @@ public interface IGuildQuestions
     /// <summary>
     /// Gets a guild question by its id
     /// </summary>
-    /// <param name="id">the id of the question to retrieve</param>
+    /// <param name="guildQuestionOrderDeleteDto">The order of the question within the guild</param>
     /// <returns>a guild question</returns>
-    Task<GuildQuestion?> GetGuildQuestionByIdAsync(int id);
+    Task<GuildQuestion> GetGuildQuestionByIdAsync(GuildQuestionOrderDeleteDto guildQuestionOrderDeleteDto);
 
     /// <summary>
     /// Creates a new guild question in the database
     /// </summary>
     /// <param name="guildQuestion">the guild question to create</param>
     /// <returns>the created guild question</returns>
-    Task<GuildQuestion> CreateGuildQuestionAsync(GuildQuestionUpdateDto guildQuestion);
+    Task<GuildQuestion> CreateGuildQuestionAsync(GuildQuestionCreateDto guildQuestion);
 
     /// <summary>
     /// Updates an existing guild question in the database
     /// </summary>
-    /// <param name="guildQuestion">the guild question to update</param>
+    /// <param name="guildQuestion">the data to update the question</param>
     /// <returns>the updated guild question</returns>
     Task<GuildQuestion> UpdateGuildQuestionAsync(GuildQuestionUpdateDto guildQuestion);
 
     /// <summary>
     /// Deletes a guild question from the database
     /// </summary>
-    /// <param name="id">the id of the question to delete</param>
+    /// <param name="guildQuestionOrderDeleteDto">The information of the question to delete</param>
     /// <returns>true if the question was deleted, false otherwise</returns>
-    Task<bool> DeleteGuildQuestionAsync(int id);
+    Task<bool> DeleteGuildQuestionAsync(GuildQuestionOrderDeleteDto guildQuestionOrderDeleteDto);
 }

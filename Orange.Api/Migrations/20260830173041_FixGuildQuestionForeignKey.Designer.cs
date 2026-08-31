@@ -11,8 +11,8 @@ using Orange.Api.utils;
 namespace Orange.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260829210201_FixKeyForQuesions")]
-    partial class FixKeyForQuesions
+    [Migration("20260830173041_FixGuildQuestionForeignKey")]
+    partial class FixGuildQuestionForeignKey
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -65,7 +65,7 @@ namespace Orange.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasAlternateKey("GuildId");
+                    b.HasIndex("GuildId");
 
                     b.ToTable("GuildQuestions");
                 });

@@ -21,7 +21,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         // Configure the GuildQuestion entity.
         modelBuilder.Entity<GuildQuestion>()
-            .HasAlternateKey(gq => gq.GuildId);
+            .HasKey(gq => gq.Id);
 
         modelBuilder.Entity<GuildQuestion>()
             .Property(gq => gq.GuildId)
