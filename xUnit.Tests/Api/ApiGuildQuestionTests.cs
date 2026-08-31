@@ -12,7 +12,7 @@ using xUnit.Tests.Helpers;
 
 namespace xUnit.Tests.Api;
 
-public class ApiGuildQuestionTests(SqliteFixture sqliteFixture, ITestOutputHelper output)
+public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
     : IClassFixture<SqliteFixture>, IAsyncLifetime
 {
 
