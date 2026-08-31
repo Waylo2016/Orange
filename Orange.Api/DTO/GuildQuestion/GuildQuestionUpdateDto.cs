@@ -3,9 +3,9 @@
 public class GuildQuestionUpdateDto
 {
     public ulong GuildId { get; set; }
-    
+
     public required string NewQuestion { get; set; }
-    
+
     public int OldQuestionOrder { get; set; }
 
     public int NewQuestionOrder { get; set; }
