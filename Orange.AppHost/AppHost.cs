@@ -19,7 +19,7 @@ public class Program
         var includeBot = !testMode || builder.Configuration.GetValue("Test:IncludeBot", false);
         var includeDashboard = !testMode || builder.Configuration.GetValue("Test:IncludeDashboard", false);
         var stackLabelFromConfig = testMode ? builder.Configuration.GetValue("Test:StackLabel", stackLabel) : stackLabel;
-        
+
 
 
         // parameters
@@ -111,7 +111,7 @@ public class Program
                 .WithReference(api)
                 .WaitFor(api);
         }
-        
+
 
         builder.Build()
             .Run();
