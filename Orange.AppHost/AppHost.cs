@@ -19,6 +19,7 @@ public class Program
         var includeBot = !testMode || builder.Configuration.GetValue("Test:IncludeBot", false);
         var includeDashboard = !testMode || builder.Configuration.GetValue("Test:IncludeDashboard", false);
         var stackLabelFromConfig = testMode ? builder.Configuration.GetValue("Test:StackLabel", stackLabel) : stackLabel;
+        
 
 
         // parameters
@@ -91,7 +92,7 @@ public class Program
                 .WithReference(api)
                 .WithReference(seq);
 
-            var gateway = builder.AddBlazorGateway("gateway")
+            var gateway = builder.AddBlazorGateway("blazor-gateway")
                 .WithExternalHttpEndpoints();
 
             gateway.WithBlazorClientApp(blazorApp);
@@ -110,8 +111,9 @@ public class Program
                 .WithReference(api)
                 .WaitFor(api);
         }
+        
 
-
-        builder.Build().Run();
+        builder.Build()
+            .Run();
     }
 }
