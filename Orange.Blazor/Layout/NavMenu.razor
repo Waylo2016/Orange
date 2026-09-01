@@ -1,44 +1,44 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Orange</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
+﻿@using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="overview">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Discord Overview
-            </NavLink>
-        </div>
-    </nav>
-</div>
+<FluentStack Orientation="Orientation.Horizontal" Width="100%">
+    <FluentNavMenu @bind-Expanded="Expanded"
+                   Width="250"
+                   Collapsible="true"
+                   Title="Discord servers">
+        @foreach (var discordServer in DiscordServers)
+        {
+            <FluentNavGroup Icon="@(new Icons.Regular.Size20.Server())", Title="@discordServer" Collapsible="true" EnableCollapsedChildNavigation="@EnableCollapsedChildNavigation">
+                @for (int i = submenuCounts[discordServer] - 1; i >= 0; i--)
+                {
+                    <FluentNavLink>Question @i</FluentNavLink>
+                }
+            </FluentNavGroup>
+        }
+    </FluentNavMenu>
+</FluentStack>
 
 @code {
-    private bool collapseNavMenu = true;
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private bool Expanded = true;
 
-    private void ToggleNavMenu()
+    private bool EnableCollapsedChildNavigation = true;
+
+    private readonly List<string> DiscordServers =
+    [
+        "Server 1",
+        "Server 2",
+        "Server 3"
+    ];
+
+    private Dictionary<string, int> submenuCounts = new();
+
+    protected override void OnInitialized()
     {
-        collapseNavMenu = !collapseNavMenu;
+        foreach (var server in DiscordServers)
+        {
+            submenuCounts[server] = Random.Shared.Next(1, 11); // 1 t/m 10
+        }
     }
+
 }
+
