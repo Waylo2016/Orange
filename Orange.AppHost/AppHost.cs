@@ -21,6 +21,7 @@ public class Program
         var stackLabelFromConfig = testMode ? builder.Configuration.GetValue("Test:StackLabel", stackLabel) : stackLabel;
 
 
+
         // parameters
         var discordApiKey = builder.AddParameter("DiscordApiKey", secret: true);
         var discordClientId = builder.AddParameter("DiscordClientId", secret: true);
@@ -91,7 +92,7 @@ public class Program
                 .WithReference(api)
                 .WithReference(seq);
 
-            var gateway = builder.AddBlazorGateway("gateway")
+            var gateway = builder.AddBlazorGateway("blazor-gateway")
                 .WithExternalHttpEndpoints();
 
             gateway.WithBlazorClientApp(blazorApp);
@@ -112,6 +113,7 @@ public class Program
         }
 
 
-        builder.Build().Run();
+        builder.Build()
+            .Run();
     }
 }
