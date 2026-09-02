@@ -1,22 +1,25 @@
-﻿@using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons
-
-<FluentStack Orientation="Orientation.Horizontal" Width="100%">
-    <FluentNavMenu @bind-Expanded="Expanded"
-                   Width="250"
-                   Collapsible="true"
-                   Title="Discord servers">
-        @foreach (var discordServer in DiscordServers)
+﻿<MudPaper Width="250px" Class="py-3" Elevation="0">
+    <MudNavMenu>
+        <MudText Typo="Typo.h6" Class="px-4">Orange</MudText>
+        <MudDivider Class="my-2"/>
+        @foreach(var server in DiscordServers)
         {
-            <FluentNavGroup Icon="@(new Icons.Regular.Size20.Server())", Title="@discordServer" Collapsible="true" EnableCollapsedChildNavigation="@EnableCollapsedChildNavigation">
-                @for (int i = 0; i < submenuCounts[discordServer]; i++)
+            <MudNavGroup 
+                Title="@server" 
+                Icon="@Icons.Custom.Brands.Discord" 
+                Expanded="@Expanded" EnableCollapsedChildNavigation="@EnableCollapsedChildNavigation"
+                Class="mud-primary-text"
+                >
+               
+                @for (int i = 1; i <= submenuCounts[server]; i++)
                 {
-                    var localvar = i; // capture loop var
-                    <FluentNavLink>Question @localvar</FluentNavLink>
+                    var localI = i;
+                    <MudNavLink Href="#">Question @localI</MudNavLink>
                 }
-            </FluentNavGroup>
+            </MudNavGroup>
         }
-    </FluentNavMenu>
-</FluentStack>
+    </MudNavMenu>
+</MudPaper>
 
 @code {
 

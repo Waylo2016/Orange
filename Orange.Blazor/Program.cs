@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.FluentUI.AspNetCore.Components;
+using MudBlazor.Services;
 
 
 namespace Orange.Blazor;
@@ -16,7 +16,7 @@ public class Program
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
         builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-        builder.Services.AddFluentUIComponents();
+        builder.Services.AddMudServices();
         
         
         var app = builder.Build();
