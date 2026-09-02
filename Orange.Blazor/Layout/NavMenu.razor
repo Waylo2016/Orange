@@ -8,9 +8,10 @@
         @foreach (var discordServer in DiscordServers)
         {
             <FluentNavGroup Icon="@(new Icons.Regular.Size20.Server())", Title="@discordServer" Collapsible="true" EnableCollapsedChildNavigation="@EnableCollapsedChildNavigation">
-                @for (int i = submenuCounts[discordServer] - 1; i >= 0; i--)
+                @for (int i = 0; i < submenuCounts[discordServer]; i++)
                 {
-                    <FluentNavLink>Question @i</FluentNavLink>
+                    var localvar = i; // capture loop var
+                    <FluentNavLink>Question @localvar</FluentNavLink>
                 }
             </FluentNavGroup>
         }
