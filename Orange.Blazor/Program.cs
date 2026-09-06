@@ -14,8 +14,13 @@ public class Program
 
         builder.RootComponents.Add<App>("#app");
         builder.RootComponents.Add<HeadOutlet>("head::after");
+        
+        var apiBaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}_api/orangeapi/");
 
-        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+        builder.Services.AddHttpClient<OrangeApiClient>(client =>
+        {
+            client.BaseAddress = apiBaseAddress;
+        });
         builder.Services.AddMudServices();
         
         
