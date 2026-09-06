@@ -101,26 +101,26 @@ public class GuildQuestionsController(IGuildQuestions guildQuestions) : Controll
     /// <summary>
     /// invoked wanting to update an existing question
     /// </summary>
-    /// <param name="guildQuestion">The updated question</param>
+    /// <param name="guildId">The ID of the guild</param>
+    /// <param name="questionId">The ID of the question</param>
+    /// <param name="guildQuestion">The updated question data</param>
     /// <returns>The updated question</returns>
-    [HttpPut("questions/update")]
+    [HttpPut("questions/guild/{guildId:ulong}/question/{questionId:int}")]
     [ProducesResponseType(typeof(GuildQuestionUpdateDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<GuildQuestionUpdateDto>> UpdateGuildQuestion([FromBody] GuildQuestionUpdateDto guildQuestion)
+    public async Task<ActionResult<GuildQuestionUpdateDto>> UpdateGuildQuestion(
+        [FromRoute] ulong guildId,
+        [FromRoute] int questionId,
+        [FromBody] GuildQuestionUpdateDto guildQuestion)
     {
         try
         {
-            var updatedQuestion = await guildQuestions.UpdateGuildQuestionAsync(guildQuestion);
+            var updatedQuestion = await guildQuestions.UpdateGuildQuestionAsync(guildId, questionId, guildQuestion);
             return Ok(updatedQuestion);
         }
         catch (NotFoundException e)
         {
             return NotFound(e.Message);
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
         }
     }
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -73,30 +74,31 @@ public class GuildQuestionService(ApplicationDbContext _context, ILogger<GuildQu
     /// <summary>
     /// This method is invoked wanting to update an existing guild question
     /// </summary>
-    /// <param name="guildQuestion">The updated question</param>
+    /// <param name="guildId">The ID of the guild</param>
+    /// <param name="questionId">The ID of the question</param>
+    /// <param name="dto">The updated question data</param>
+    /// <param name="cancellationToken">The cancellation token</param>
     /// <returns>The updated question</returns>
-    public async Task<GuildQuestion> UpdateGuildQuestionAsync(GuildQuestionUpdateDto guildQuestion)
+    public async Task<GuildQuestion> UpdateGuildQuestionAsync(
+        ulong guildId,
+        int questionId,
+        GuildQuestionUpdateDto dto,
+        CancellationToken cancellationToken = default)
     {
-        var existingGuildQuestion = await _context.GuildQuestions
-            .FirstOrDefaultAsync(gq => gq.GuildId == guildQuestion.GuildId && gq.QuestionOrder == guildQuestion.OldQuestionOrder);
+        var question = await _context.GuildQuestions
+            .FirstOrDefaultAsync(q => q.Id == questionId && q.GuildId == guildId, cancellationToken);
 
-        if (existingGuildQuestion == null)
+        if (question is null)
         {
-            _logger.LogWarning("Guild question with guild ID {Id} and question order {Order} not found.", guildQuestion.GuildId, guildQuestion.OldQuestionOrder);
-            throw new NotFoundException($"Guild question with ID {guildQuestion.GuildId} not found.");
+            _logger.LogWarning("Guild question {QuestionId} not found in guild {GuildId}.", questionId, guildId);
+            throw new NotFoundException($"Question {questionId} was not found.");
         }
 
-        var newGuildQuestion = new GuildQuestion
-        {
-            GuildId = guildQuestion.GuildId,
-            Question = guildQuestion.NewQuestion,
-            QuestionOrder = guildQuestion.NewQuestionOrder
-        };
+        // The entity is tracked, so assigning the property is enough. No Update() call needed.
+        question.Question = dto.Question;
 
-        _context.GuildQuestions.Update(newGuildQuestion);
-        await _context.SaveChangesAsync();
-
-        return newGuildQuestion;
+        await _context.SaveChangesAsync(cancellationToken);
+        return question;
     }
 
     /// <summary>

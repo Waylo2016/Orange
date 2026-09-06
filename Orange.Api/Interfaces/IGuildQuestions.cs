@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Orange.Api.DTO.Guild;
 using Orange.Api.DTO.GuildQuestion;
@@ -31,9 +32,17 @@ public interface IGuildQuestions
     /// <summary>
     /// Updates an existing guild question in the database
     /// </summary>
-    /// <param name="guildQuestion">the data to update the question</param>
+    /// <param name="guildId">The ID of the guild</param>
+    /// <param name="questionId">The ID of the question</param>
+    /// <param name="dto">The updated question data</param>
+    /// <param name="cancellationToken">The cancellation token</param>
     /// <returns>the updated guild question</returns>
-    Task<GuildQuestion> UpdateGuildQuestionAsync(GuildQuestionUpdateDto guildQuestion);
+    Task<GuildQuestion> UpdateGuildQuestionAsync(
+        ulong guildId,
+        int questionId,
+        GuildQuestionUpdateDto dto,
+        CancellationToken cancellationToken = default
+        );
 
     /// <summary>
     /// Deletes a guild question from the database
