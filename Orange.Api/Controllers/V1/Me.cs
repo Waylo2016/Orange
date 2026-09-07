@@ -24,8 +24,8 @@ public class MeController : ControllerBase
     /// <returns>the guilds belonging to the current dashboard user</returns>
     [HttpGet("guilds")]
     [ProducesResponseType(typeof(List<GuildSummaryDto>), StatusCodes.Status200OK)]
-    public Task<ActionResult<List<GuildSummaryDto>>> GetMyGuilds()
+    public async Task<ActionResult<List<GuildSummaryDto>>> GetMyGuilds()
     {
-        return Task.FromResult<ActionResult<List<GuildSummaryDto>>>(StatusCode(StatusCodes.Status501NotImplemented));
+        return Problem("not yet implemented", statusCode: StatusCodes.Status501NotImplemented);
     }
 }

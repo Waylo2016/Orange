@@ -25,9 +25,9 @@ public class GuildSettingsController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(GuildSettingsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public Task<ActionResult<GuildSettingsDto>> GetGuildSettings([FromRoute] ulong guildId)
+    public async Task<ActionResult<GuildSettingsDto>> GetGuildSettings([FromRoute] ulong guildId)
     {
-        return Task.FromResult<ActionResult<GuildSettingsDto>>(StatusCode(StatusCodes.Status501NotImplemented));
+        return Problem("not yet implemented", statusCode: StatusCodes.Status501NotImplemented);
     }
 
     /// <summary>
@@ -43,10 +43,10 @@ public class GuildSettingsController : ControllerBase
     [HttpPut]
     [ProducesResponseType(typeof(GuildSettingsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public Task<ActionResult<GuildSettingsDto>> UpdateGuildSettings(
+    public async Task<ActionResult<GuildSettingsDto>> UpdateGuildSettings(
         [FromRoute] ulong guildId,
         [FromBody] GuildSettingsUpdateDto guildSettings)
     {
-        return Task.FromResult<ActionResult<GuildSettingsDto>>(StatusCode(StatusCodes.Status501NotImplemented));
+        return Problem("not yet implemented", statusCode: StatusCodes.Status501NotImplemented);
     }
 }

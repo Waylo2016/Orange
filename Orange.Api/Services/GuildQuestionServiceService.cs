@@ -15,7 +15,7 @@ using Orange.Api.utils;
 
 namespace Orange.Api.Services;
 
-public class GuildQuestionService(ApplicationDbContext _context, ILogger<GuildQuestionService> _logger) : IGuildQuestions
+public class GuildQuestionServiceService(ApplicationDbContext _context, ILogger<GuildQuestionServiceService> _logger) : IGuildQuestionService
 {
     /// <summary>
     /// This method is invoked wanting to see all guild questions for a specific guild
@@ -37,15 +37,15 @@ public class GuildQuestionService(ApplicationDbContext _context, ILogger<GuildQu
     /// <param name="guildQuestionOrderDeleteDto">DTO containing guild ID and question Order</param>
     /// <returns>the single question asked</returns>
     /// <exception cref="NotFoundException">thrown when no question is found</exception>
-    public async Task<GuildQuestion> GetGuildQuestionByIdAsync(GuildQuestionOrderDeleteDto guildQuestionOrderDeleteDto)
+    public async Task<GuildQuestion> GetGuildQuestionByIdAsync(ulong guildId, int questionId)
     {
         var guildQuestion = await _context.GuildQuestions
-            .FirstOrDefaultAsync(gq => gq.GuildId == guildQuestionOrderDeleteDto.GuildId && gq.QuestionOrder == guildQuestionOrderDeleteDto.QuestionOrder);
+            .FirstOrDefaultAsync(gq => gq.GuildId == guildId && gq.Id == questionId);
 
         if (guildQuestion == null)
         {
-            _logger.LogWarning("Guild question with guild ID {Id} and question order {Order} not found.", guildQuestionOrderDeleteDto.GuildId, guildQuestionOrderDeleteDto.QuestionOrder);
-            throw new NotFoundException($"Guild question with ID {guildQuestionOrderDeleteDto.GuildId} not found.");
+            _logger.LogWarning("Guild question with guild ID {Id} and question ID {QuestionId} not found.", guildId, questionId);
+            throw new NotFoundException($"Guild question with ID {guildId} not found.");
         }
 
         return guildQuestion;
@@ -120,5 +120,10 @@ public class GuildQuestionService(ApplicationDbContext _context, ILogger<GuildQu
         await _context.SaveChangesAsync();
 
         return true;
+    }
+
+    public async Task<IActionResult> ReorderGuildQuestionsAsync(GuildQuestionsReorderDto guildQuestionReorderDto)
+    {
+        throw new System.NotImplementedException();
     }
 }

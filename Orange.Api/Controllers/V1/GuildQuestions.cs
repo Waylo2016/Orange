@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Orange.Api.Controllers.V1;
 [ApiVersion("1.0")]
 [Tags("Guild - Questions")]
 [Produces("application/json")]
-public class GuildQuestionsController(IGuildQuestions guildQuestions) : ControllerBase
+public class GuildQuestionsController(IGuildQuestionService guildQuestionService) : ControllerBase
 {
     /// <summary>
     /// invoked wanting to see all questions for a guild
@@ -28,7 +29,7 @@ public class GuildQuestionsController(IGuildQuestions guildQuestions) : Controll
     [ProducesResponseType(typeof(List<GuildQuestionGetDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<List<GuildQuestionGetDto>>> GetGuildQuestions([FromRoute] ulong guildId)
     {
-        var questions = await guildQuestions.GetGuildQuestionsPerGuildAsync(new GuildIdDTO { GuildId = guildId });
+        var questions = await guildQuestionService.GetGuildQuestionsPerGuildAsync(new GuildIdDTO { GuildId = guildId });
         return Ok(questions);
     }
 
@@ -50,7 +51,7 @@ public class GuildQuestionsController(IGuildQuestions guildQuestions) : Controll
 
         try
         {
-            var createdQuestion = await guildQuestions.CreateGuildQuestionAsync(guildQuestion);
+            var createdQuestion = await guildQuestionService.CreateGuildQuestionAsync(guildQuestion);
             return CreatedAtAction(
                 nameof(GetGuildQuestionById),
                 new
@@ -71,7 +72,7 @@ public class GuildQuestionsController(IGuildQuestions guildQuestions) : Controll
     /// </summary>
     /// <remarks>
     /// Auth: bot + mod (not yet enforced - see TODO.md).
-    /// TODO: IGuildQuestions has no lookup by question ID yet, only by question order - see TODO.md.
+    /// TODO: IGuildQuestionService has no lookup by question ID yet, only by question order - see TODO.md.
     /// </remarks>
     /// <param name="guildId">The ID of the guild</param>
     /// <param name="questionId">The ID of the question</param>
@@ -79,9 +80,18 @@ public class GuildQuestionsController(IGuildQuestions guildQuestions) : Controll
     [HttpGet("{questionId:int}")]
     [ProducesResponseType(typeof(GuildQuestionGetDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public Task<ActionResult<GuildQuestionGetDto>> GetGuildQuestionById([FromRoute] ulong guildId, [FromRoute] int questionId)
+    public async Task<ActionResult<GuildQuestionGetDto>> GetGuildQuestionById([FromRoute] ulong guildId, [FromRoute] int questionId)
     {
-        return Task.FromResult<ActionResult<GuildQuestionGetDto>>(StatusCode(StatusCodes.Status501NotImplemented));
+        try
+        {
+            var question = await guildQuestionService.GetGuildQuestionByIdAsync(guildId, questionId);
+
+            return Ok(question);
+        }
+        catch (NotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
     }
 
     /// <summary>
@@ -104,7 +114,7 @@ public class GuildQuestionsController(IGuildQuestions guildQuestions) : Controll
     {
         try
         {
-            var updatedQuestion = await guildQuestions.UpdateGuildQuestionAsync(guildId, questionId, guildQuestion, cancellationToken);
+            var updatedQuestion = await guildQuestionService.UpdateGuildQuestionAsync(guildId, questionId, guildQuestion, cancellationToken);
             return Ok(updatedQuestion);
         }
         catch (NotFoundException e)
@@ -118,16 +128,16 @@ public class GuildQuestionsController(IGuildQuestions guildQuestions) : Controll
     /// </summary>
     /// <remarks>
     /// Auth: bot + mod (not yet enforced - see TODO.md).
-    /// TODO: IGuildQuestions has no delete-by-question-ID method yet, only by question order - see TODO.md.
+    /// TODO: IGuildQuestionService has no delete-by-question-ID method yet, only by question order - see TODO.md.
     /// </remarks>
     /// <param name="guildId">The ID of the guild</param>
     /// <param name="questionId">The ID of the question</param>
     /// <returns>no content</returns>
     [HttpDelete("{questionId:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public Task<IActionResult> DeleteGuildQuestion([FromRoute] ulong guildId, [FromRoute] int questionId)
+    public async Task<IActionResult> DeleteGuildQuestion([FromRoute] ulong guildId, [FromRoute] int questionId)
     {
-        return Task.FromResult<IActionResult>(StatusCode(StatusCodes.Status501NotImplemented));
+        return Problem("not yet implemented", statusCode: StatusCodes.Status501NotImplemented);
     }
 
     /// <summary>
@@ -142,8 +152,8 @@ public class GuildQuestionsController(IGuildQuestions guildQuestions) : Controll
     /// <returns>no content</returns>
     [HttpPut("order")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public Task<IActionResult> ReorderGuildQuestions([FromRoute] ulong guildId, [FromBody] GuildQuestionsReorderDto reorderDto)
+    public async Task<IActionResult> ReorderGuildQuestions([FromRoute] ulong guildId, [FromBody] GuildQuestionsReorderDto reorderDto)
     {
-        return Task.FromResult<IActionResult>(StatusCode(StatusCodes.Status501NotImplemented));
+        return Problem("not yet implemented", statusCode: StatusCodes.Status501NotImplemented);
     }
 }

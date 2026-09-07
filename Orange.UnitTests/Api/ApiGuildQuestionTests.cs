@@ -21,15 +21,15 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
 
     private readonly ApplicationDbContext _dbContext = sqliteFixture.CreateDbContext();
 
-    private static readonly ILogger<GuildQuestionService> _nsubLogger = Substitute.For<ILogger<GuildQuestionService>>();
+    private static readonly ILogger<GuildQuestionServiceService> _nsubLogger = Substitute.For<ILogger<GuildQuestionServiceService>>();
 
-    private GuildQuestionService _guildQuestionService = null!;
+    private GuildQuestionServiceService _guildQuestionServiceService = null!;
 
     // Runs before each [Fact]
     public async ValueTask InitializeAsync()
     {
         await sqliteFixture.ResetAsync();
-        _guildQuestionService = new GuildQuestionService(_dbContext, _nsubLogger);
+        _guildQuestionServiceService = new GuildQuestionServiceService(_dbContext, _nsubLogger);
     }
 
     public ValueTask DisposeAsync() => _dbContext.DisposeAsync();
@@ -62,7 +62,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         await _dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var createdQuestion = await _guildQuestionService.CreateGuildQuestionAsync(new GuildQuestionCreateDto
+        var createdQuestion = await _guildQuestionServiceService.CreateGuildQuestionAsync(new GuildQuestionCreateDto
         {
             GuildId = guildId,
             Question = question1,
@@ -93,14 +93,14 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         }, TestContext.Current.CancellationToken);
         await _dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
-        var createdQuestion1 = await _guildQuestionService.CreateGuildQuestionAsync(new GuildQuestionCreateDto
+        var createdQuestion1 = await _guildQuestionServiceService.CreateGuildQuestionAsync(new GuildQuestionCreateDto
         {
             GuildId = guildId,
             Question = question1,
             QuestionOrder = questionOrder1
         });
 
-        var createdQuestion2 = await _guildQuestionService.CreateGuildQuestionAsync(new GuildQuestionCreateDto
+        var createdQuestion2 = await _guildQuestionServiceService.CreateGuildQuestionAsync(new GuildQuestionCreateDto
         {
             GuildId = GuildId2,
             Question = question2,
@@ -109,12 +109,12 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
 
         // Act
 
-        var questionsForGuild1 = await _guildQuestionService.GetGuildQuestionsPerGuildAsync(new GuildIdDTO
+        var questionsForGuild1 = await _guildQuestionServiceService.GetGuildQuestionsPerGuildAsync(new GuildIdDTO
         {
             GuildId = guildId
         });
 
-        var questionsForGuild2 = await _guildQuestionService.GetGuildQuestionsPerGuildAsync(new GuildIdDTO
+        var questionsForGuild2 = await _guildQuestionServiceService.GetGuildQuestionsPerGuildAsync(new GuildIdDTO
         {
             GuildId = GuildId2
         });
@@ -141,7 +141,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         }, TestContext.Current.CancellationToken);
         await _dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
-        await _guildQuestionService.CreateGuildQuestionAsync(new GuildQuestionCreateDto
+        await _guildQuestionServiceService.CreateGuildQuestionAsync(new GuildQuestionCreateDto
         {
             GuildId = guildId,
             Question = question1,
@@ -150,7 +150,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         await _dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var deletedQuestion = await _guildQuestionService.DeleteGuildQuestionAsync(new GuildQuestionOrderDeleteDto
+        var deletedQuestion = await _guildQuestionServiceService.DeleteGuildQuestionAsync(new GuildQuestionOrderDeleteDto
         {
             GuildId = guildId,
             QuestionOrder = questionOrder1
@@ -171,14 +171,14 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         }, TestContext.Current.CancellationToken);
         await _dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
-        await _guildQuestionService.CreateGuildQuestionAsync(new GuildQuestionCreateDto
+        await _guildQuestionServiceService.CreateGuildQuestionAsync(new GuildQuestionCreateDto
         {
             GuildId = guildId,
             Question = question1,
             QuestionOrder = questionOrder1
         });
 
-        var retrievedQuestion = await _guildQuestionService.GetGuildQuestionByIdAsync(new GuildQuestionOrderDeleteDto
+        var retrievedQuestion = await _guildQuestionServiceService.GetGuildQuestionByIdAsync(new GuildQuestionOrderDeleteDto
         {
             GuildId = guildId,
             QuestionOrder = questionOrder1
@@ -205,14 +205,14 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         }, TestContext.Current.CancellationToken);
         await _dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
-        await _guildQuestionService.CreateGuildQuestionAsync(new GuildQuestionCreateDto
+        await _guildQuestionServiceService.CreateGuildQuestionAsync(new GuildQuestionCreateDto
         {
             GuildId = guildId,
             Question = question1,
             QuestionOrder = questionOrder1
         });
 
-        await _guildQuestionService.CreateGuildQuestionAsync(new GuildQuestionCreateDto
+        await _guildQuestionServiceService.CreateGuildQuestionAsync(new GuildQuestionCreateDto
         {
             GuildId = guildId,
             Question = question2,
@@ -220,7 +220,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         });
 
         // Act
-        var questionsList = await _guildQuestionService.GetGuildQuestionsPerGuildAsync(new GuildIdDTO
+        var questionsList = await _guildQuestionServiceService.GetGuildQuestionsPerGuildAsync(new GuildIdDTO
         {
             GuildId = guildId
         });
@@ -249,7 +249,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         await _dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var questionsList = await _guildQuestionService.GetGuildQuestionsPerGuildAsync(new GuildIdDTO
+        var questionsList = await _guildQuestionServiceService.GetGuildQuestionsPerGuildAsync(new GuildIdDTO
         {
             GuildId = guildId
         });
@@ -269,7 +269,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         ulong nonExistentGuildId = 999999999999999999;
 
         // Act
-        var questionsList = await _guildQuestionService.GetGuildQuestionsPerGuildAsync(new GuildIdDTO
+        var questionsList = await _guildQuestionServiceService.GetGuildQuestionsPerGuildAsync(new GuildIdDTO
         {
             GuildId = nonExistentGuildId,
         });
@@ -289,7 +289,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         }, TestContext.Current.CancellationToken);
         await _dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
-        await _guildQuestionService.CreateGuildQuestionAsync(new GuildQuestionCreateDto
+        await _guildQuestionServiceService.CreateGuildQuestionAsync(new GuildQuestionCreateDto
         {
             GuildId = guildId,
             Question = question1,
@@ -301,7 +301,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
             .SingleAsync(q => q.GuildId == guildId && q.QuestionOrder == questionOrder1, TestContext.Current.CancellationToken);
 
         // Act
-        var updatedQuestion = await _guildQuestionService.UpdateGuildQuestionAsync(
+        var updatedQuestion = await _guildQuestionServiceService.UpdateGuildQuestionAsync(
             guildId,
             createdQuestion.Id,
             new GuildQuestionUpdateDto
@@ -336,7 +336,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         }, TestContext.Current.CancellationToken);
         await _dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
-        await _guildQuestionService.CreateGuildQuestionAsync(new GuildQuestionCreateDto
+        await _guildQuestionServiceService.CreateGuildQuestionAsync(new GuildQuestionCreateDto
         {
             GuildId = guildId,
             Question = question1,
@@ -348,7 +348,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
             .SingleAsync(q => q.GuildId == guildId && q.QuestionOrder == questionOrder1, TestContext.Current.CancellationToken);
 
         // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => _guildQuestionService.UpdateGuildQuestionAsync(
+        await Assert.ThrowsAsync<NotFoundException>(() => _guildQuestionServiceService.UpdateGuildQuestionAsync(
             GuildId2,
             createdQuestion.Id,
             new GuildQuestionUpdateDto
