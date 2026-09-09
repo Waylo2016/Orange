@@ -19,7 +19,7 @@ public class GuildsController(IGuildService guildService) : ControllerBase
     /// <summary>
     /// invoked when the bot joins a guild
     /// </summary>
-    /// <remarks>Auth: bot only (not yet enforced - see TODO.md)</remarks>
+    /// <remarks>Auth: bot only</remarks>
     /// <param name="guildJoinDto">the data required to join the guild</param>
     /// <returns>An object representing the joined guild</returns>
 
@@ -47,7 +47,7 @@ public class GuildsController(IGuildService guildService) : ControllerBase
     /// <summary>
     /// invoked when the bot leaves a guild
     /// </summary>
-    /// <remarks>Auth: bot only (not yet enforced - see TODO.md)</remarks>
+    /// <remarks>Auth: bot only</remarks>
     /// <param name="guildId">the ID of the guild to leave</param>
     /// <returns>removed successfully</returns>
     [HttpDelete("{guildId:ulong}")]
@@ -62,7 +62,7 @@ public class GuildsController(IGuildService guildService) : ControllerBase
     /// <summary>
     /// Get the total number of guilds the bot is in
     /// </summary>
-    /// <remarks>Auth: bot only (not yet enforced - see TODO.md)</remarks>
+    /// <remarks>Auth: bot only</remarks>
     /// <returns>The total number of guilds the bot is in</returns>
     [HttpGet("count")]
     [Authorize(AuthenticationSchemes = "ApiKey", Policy = "BotOnly")]
@@ -72,4 +72,6 @@ public class GuildsController(IGuildService guildService) : ControllerBase
         int count = await guildService.GetGuildCountAsync();
         return Ok(count);
     }
+    
+    //TODO: maybe change it so the leave server can be called by people logged into the web dashboard
 }

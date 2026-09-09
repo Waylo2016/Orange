@@ -40,6 +40,7 @@ public class Program
                 policy.AddAuthenticationSchemes(ApiKeyAuthenticationOptions.DefaultScheme);
                 policy.RequireAuthenticatedUser();
             });
+            //TODO: add a DashBoardUser policy for people who are logging into the dashboard, probably via JWT? 
         });
 
         builder.Services.AddCors(options =>
