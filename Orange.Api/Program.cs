@@ -41,7 +41,7 @@ public class Program
 
         // Register services for dependency injection
         builder.Services.AddScoped<IGuildService, GuildService>();
-        builder.Services.AddScoped<IGuildQuestionService, GuildQuestionServiceService>();
+        builder.Services.AddScoped<IGuildQuestionService, GuildQuestionService>();
 
 
         // Set up versioning for Swagger

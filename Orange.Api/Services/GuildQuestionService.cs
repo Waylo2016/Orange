@@ -14,7 +14,7 @@ using Orange.Api.utils;
 
 namespace Orange.Api.Services;
 
-public class GuildQuestionServiceService(ApplicationDbContext _context, ILogger<GuildQuestionServiceService> _logger) : IGuildQuestionService
+public class GuildQuestionService(ApplicationDbContext _context, ILogger<GuildQuestionService> _logger) : IGuildQuestionService
 {
     /// <summary>
     /// This method is invoked wanting to see all guild questions for a specific guild
@@ -53,7 +53,7 @@ public class GuildQuestionServiceService(ApplicationDbContext _context, ILogger<
     public async Task<GuildQuestionGetDto> GetGuildQuestionByIdAsync(ulong guildId, int questionId)
     {
         var guildQuestion = await _context.GuildQuestions
-            .FirstOrDefaultAsync(gq => gq.GuildId == guildId && gq.Id == questionId);
+            .FirstOrDefaultAsync(gq => gq.Id == questionId && gq.GuildId == guildId);
 
         if (guildQuestion == null)
         {
