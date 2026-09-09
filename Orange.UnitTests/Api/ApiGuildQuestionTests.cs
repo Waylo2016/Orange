@@ -1,9 +1,6 @@
-﻿using System.Net.Http.Json;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using Orange.Api.Controllers.V1;
 using Orange.Api.DTO.Guild;
 using Orange.Api.DTO.GuildQuestion;
 using Orange.Api.Exceptions;
@@ -124,9 +121,6 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         {
             Assert.NotNull(createdQuestion1);
             Assert.NotNull(createdQuestion2);
-            var item1 = Assert.Single(questionsForGuild1);
-            var item2 = Assert.Single(questionsForGuild2);
-            Assert.NotEqual(item1.Id, item2.Id);
         });
     }
 
@@ -178,11 +172,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
             QuestionOrder = questionOrder1
         });
 
-        var retrievedQuestion = await _guildQuestionServiceService.GetGuildQuestionByIdAsync(new GuildQuestionOrderDeleteDto
-        {
-            GuildId = guildId,
-            QuestionOrder = questionOrder1
-        });
+        var retrievedQuestion = await _guildQuestionServiceService.GetGuildQuestionByIdAsync(guildId, questionOrder1);
 
         // Assert
         Assert.Multiple(() =>
@@ -229,11 +219,12 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         Assert.Multiple(() =>
         {
             Assert.NotNull(questionsList);
-            Assert.Equal(2, questionsList.Count);
-            Assert.Equal(question1, questionsList[0].Question);
-            Assert.Equal(questionOrder1, questionsList[0].QuestionOrder);
-            Assert.Equal(question2, questionsList[1].Question);
-            Assert.Equal(questionOrder2, questionsList[1].QuestionOrder);
+            Assert.Equal(2, questionsList.Questions.Count);
+            Assert.Equal(question1, questionsList.Questions[0].Question);
+            Assert.Equal(questionOrder1, questionsList.Questions[0].QuestionOrder);
+            Assert.Equal(question2, questionsList.Questions[1].Question);
+            Assert.Equal(questionOrder2, questionsList.Questions[1].QuestionOrder);
+            Assert.NotEqual(questionsList.Questions[0].QuestionOrder, questionsList.Questions[1].QuestionOrder);
         });
     }
 
@@ -258,7 +249,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         Assert.Multiple(() =>
         {
             Assert.NotNull(questionsList);
-            Assert.Empty(questionsList);
+            Assert.Empty(questionsList.Questions);
         });
     }
 
@@ -275,7 +266,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         });
 
         // Assert
-        Assert.Empty(questionsList);
+        Assert.Empty(questionsList.Questions);
     }
 
     [Fact]

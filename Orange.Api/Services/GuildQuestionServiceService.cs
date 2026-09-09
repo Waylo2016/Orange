@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -22,22 +21,36 @@ public class GuildQuestionServiceService(ApplicationDbContext _context, ILogger<
     /// </summary>
     /// <param name="guildIdDto">DTO carrying the guild ID</param>
     /// <returns></returns>
-    public async Task<List<GuildQuestion>> GetGuildQuestionsPerGuildAsync(GuildIdDTO guildIdDto)
+    public async Task<GuildQuestionGetBatchDto> GetGuildQuestionsPerGuildAsync(GuildIdDTO guildIdDto)
     {
         var guildQuestions = await _context.GuildQuestions
             .Where(gq => gq.GuildId == guildIdDto.GuildId)
             .ToListAsync();
 
-        return guildQuestions;
+        var orderedQuestions = guildQuestions.OrderBy(gq => gq.QuestionOrder)
+            .Select(gq => new GuildQuestionGetDto
+            {
+                GuildId = gq.GuildId,
+                QuestionOrder = gq.QuestionOrder,
+                Question = gq.Question
+            }).ToList();
+        
+        return new GuildQuestionGetBatchDto()
+        {
+            GuildId = guildIdDto.GuildId,
+            Questions = orderedQuestions
+        };
     }
 
     /// <summary>
     /// This method is invoked wanting to see a specific guild question by its ID
     /// </summary>
+    /// <param name="guildId"></param>
+    /// <param name="questionId"></param>
     /// <param name="guildQuestionOrderDeleteDto">DTO containing guild ID and question Order</param>
     /// <returns>the single question asked</returns>
     /// <exception cref="NotFoundException">thrown when no question is found</exception>
-    public async Task<GuildQuestion> GetGuildQuestionByIdAsync(ulong guildId, int questionId)
+    public async Task<GuildQuestionGetDto> GetGuildQuestionByIdAsync(ulong guildId, int questionId)
     {
         var guildQuestion = await _context.GuildQuestions
             .FirstOrDefaultAsync(gq => gq.GuildId == guildId && gq.Id == questionId);
@@ -48,7 +61,12 @@ public class GuildQuestionServiceService(ApplicationDbContext _context, ILogger<
             throw new NotFoundException($"Guild question with ID {guildId} not found.");
         }
 
-        return guildQuestion;
+        return new GuildQuestionGetDto()
+        {
+            GuildId = guildQuestion.GuildId,
+            QuestionOrder = guildQuestion.QuestionOrder,
+            Question = guildQuestion.Question
+        };
     }
 
     /// <summary>
@@ -56,7 +74,7 @@ public class GuildQuestionServiceService(ApplicationDbContext _context, ILogger<
     /// </summary>
     /// <param name="guildQuestion">The question to create</param>
     /// <returns>The created question</returns>
-    public async Task<GuildQuestion> CreateGuildQuestionAsync(GuildQuestionCreateDto guildQuestion)
+    public async Task<GuildQuestionGetDto> CreateGuildQuestionAsync(GuildQuestionCreateDto guildQuestion)
     {
         var newGuildQuestion = new GuildQuestion
         {
@@ -68,7 +86,12 @@ public class GuildQuestionServiceService(ApplicationDbContext _context, ILogger<
         _context.GuildQuestions.Add(newGuildQuestion);
         await _context.SaveChangesAsync();
 
-        return newGuildQuestion;
+        return new GuildQuestionGetDto()
+        {
+            GuildId = newGuildQuestion.GuildId,
+            QuestionOrder = newGuildQuestion.QuestionOrder,
+            Question = newGuildQuestion.Question
+        };
     }
 
     /// <summary>
@@ -79,7 +102,7 @@ public class GuildQuestionServiceService(ApplicationDbContext _context, ILogger<
     /// <param name="dto">The updated question data</param>
     /// <param name="cancellationToken">The cancellation token</param>
     /// <returns>The updated question</returns>
-    public async Task<GuildQuestion> UpdateGuildQuestionAsync(
+    public async Task<GuildQuestionGetDto> UpdateGuildQuestionAsync(
         ulong guildId,
         int questionId,
         GuildQuestionUpdateDto dto,
@@ -93,12 +116,16 @@ public class GuildQuestionServiceService(ApplicationDbContext _context, ILogger<
             _logger.LogWarning("Guild question {QuestionId} not found in guild {GuildId}.", questionId, guildId);
             throw new NotFoundException($"Question {questionId} was not found.");
         }
-
-        // The entity is tracked, so assigning the property is enough. No Update() call needed.
+        
         question.Question = dto.Question;
 
         await _context.SaveChangesAsync(cancellationToken);
-        return question;
+        return new GuildQuestionGetDto()
+        {
+            GuildId = question.GuildId,
+            QuestionOrder = question.QuestionOrder,
+            Question = question.Question
+        };
     }
 
     /// <summary>
@@ -124,6 +151,6 @@ public class GuildQuestionServiceService(ApplicationDbContext _context, ILogger<
 
     public async Task<IActionResult> ReorderGuildQuestionsAsync(GuildQuestionsReorderDto guildQuestionReorderDto)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 }

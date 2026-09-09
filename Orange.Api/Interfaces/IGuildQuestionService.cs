@@ -14,7 +14,7 @@ public interface IGuildQuestionService
     /// Gets all guild questions from the database
     /// </summary>
     /// <returns>a collection of guild questions</returns>
-    Task<List<GuildQuestion>> GetGuildQuestionsPerGuildAsync(GuildIdDTO guildIdDto);
+    Task<GuildQuestionGetBatchDto> GetGuildQuestionsPerGuildAsync(GuildIdDTO guildIdDto);
 
     /// <summary>
     /// Gets a guild question by its id
@@ -22,14 +22,14 @@ public interface IGuildQuestionService
     /// <param name="guildId">The ID of the guild</param>
     /// <param name="questionId">The ID of the question</param>
     /// <returns>a guild question</returns>
-    Task<GuildQuestion> GetGuildQuestionByIdAsync(ulong guildId, int questionId);
+    Task<GuildQuestionGetDto> GetGuildQuestionByIdAsync(ulong guildId, int questionId);
 
     /// <summary>
     /// Creates a new guild question in the database
     /// </summary>
     /// <param name="guildQuestion">the guild question to create</param>
     /// <returns>the created guild question</returns>
-    Task<GuildQuestion> CreateGuildQuestionAsync(GuildQuestionCreateDto guildQuestion);
+    Task<GuildQuestionGetDto> CreateGuildQuestionAsync(GuildQuestionCreateDto guildQuestion);
 
     /// <summary>
     /// Updates an existing guild question in the database
@@ -39,7 +39,7 @@ public interface IGuildQuestionService
     /// <param name="dto">The updated question data</param>
     /// <param name="cancellationToken">The cancellation token</param>
     /// <returns>the updated guild question</returns>
-    Task<GuildQuestion> UpdateGuildQuestionAsync(
+    Task<GuildQuestionGetDto> UpdateGuildQuestionAsync(
         ulong guildId,
         int questionId,
         GuildQuestionUpdateDto dto,

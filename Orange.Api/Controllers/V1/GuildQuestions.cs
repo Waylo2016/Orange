@@ -26,8 +26,8 @@ public class GuildQuestionsController(IGuildQuestionService guildQuestionService
     /// <param name="guildId">The ID of the guild for which to retrieve questions</param>
     /// <returns>A list of guild questions</returns>
     [HttpGet]
-    [ProducesResponseType(typeof(List<GuildQuestionGetDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<GuildQuestionGetDto>>> GetGuildQuestions([FromRoute] ulong guildId)
+    [ProducesResponseType(typeof(List<GuildQuestionGetBatchDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<List<GuildQuestionGetBatchDto>>> GetGuildQuestions([FromRoute] ulong guildId)
     {
         var questions = await guildQuestionService.GetGuildQuestionsPerGuildAsync(new GuildIdDTO { GuildId = guildId });
         return Ok(questions);
@@ -41,9 +41,9 @@ public class GuildQuestionsController(IGuildQuestionService guildQuestionService
     /// <param name="guildQuestion">The question to create</param>
     /// <returns>The created question</returns>
     [HttpPost]
-    [ProducesResponseType(typeof(GuildQuestionGetDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(GuildQuestionGetBatchDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<GuildQuestionGetDto>> CreateGuildQuestion(
+    public async Task<ActionResult<GuildQuestionGetBatchDto>> CreateGuildQuestion(
         [FromRoute] ulong guildId,
         [FromBody] GuildQuestionCreateDto guildQuestion)
     {
@@ -56,12 +56,11 @@ public class GuildQuestionsController(IGuildQuestionService guildQuestionService
                 nameof(GetGuildQuestionById),
                 new
                 {
-                    guildId = createdQuestion.GuildId,
-                    questionId = createdQuestion.Id
+                    guildId = createdQuestion.GuildId
                 },
                 createdQuestion);
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             return BadRequest(e.Message);
         }
@@ -78,9 +77,9 @@ public class GuildQuestionsController(IGuildQuestionService guildQuestionService
     /// <param name="questionId">The ID of the question</param>
     /// <returns>the specified question</returns>
     [HttpGet("{questionId:int}")]
-    [ProducesResponseType(typeof(GuildQuestionGetDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GuildQuestionGetBatchDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<GuildQuestionGetDto>> GetGuildQuestionById([FromRoute] ulong guildId, [FromRoute] int questionId)
+    public async Task<ActionResult<GuildQuestionGetBatchDto>> GetGuildQuestionById([FromRoute] ulong guildId, [FromRoute] int questionId)
     {
         try
         {
