@@ -7,6 +7,6 @@ namespace Orange.Api.Interfaces;
 public interface IGuildSettingsService
 {
     public Task<ActionResult<GuildSettingsDto>> GetGuildSettingsAsync(ulong guildId);
-    
+
     public Task<ActionResult<GuildSettingsDto>> UpdateGuildSettingsAsync(ulong guildId, GuildSettingsUpdateDto guildSettings);
 }

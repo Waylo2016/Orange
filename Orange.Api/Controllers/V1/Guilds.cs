@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Orange.Api.DTO.Guild;
@@ -21,7 +22,9 @@ public class GuildsController(IGuildService guildService) : ControllerBase
     /// <remarks>Auth: bot only (not yet enforced - see TODO.md)</remarks>
     /// <param name="guildJoinDto">the data required to join the guild</param>
     /// <returns>An object representing the joined guild</returns>
+
     [HttpPost]
+    [Authorize(AuthenticationSchemes = "ApiKey", Policy = "BotOnly")]
     [ProducesResponseType(typeof(GuildJoinDTO), StatusCodes.Status201Created)]
     public async Task<ActionResult<GuildJoinDTO>> GuildJoin([FromBody] GuildJoinDTO guildJoinDto)
     {
@@ -48,6 +51,7 @@ public class GuildsController(IGuildService guildService) : ControllerBase
     /// <param name="guildId">the ID of the guild to leave</param>
     /// <returns>removed successfully</returns>
     [HttpDelete("{guildId:ulong}")]
+    [Authorize(AuthenticationSchemes = "ApiKey", Policy = "BotOnly")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> GuildLeave([FromRoute] ulong guildId)
     {
@@ -61,6 +65,7 @@ public class GuildsController(IGuildService guildService) : ControllerBase
     /// <remarks>Auth: bot only (not yet enforced - see TODO.md)</remarks>
     /// <returns>The total number of guilds the bot is in</returns>
     [HttpGet("count")]
+    [Authorize(AuthenticationSchemes = "ApiKey", Policy = "BotOnly")]
     [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
     public async Task<ActionResult<int>> GetGuildCount()
     {

@@ -52,6 +52,6 @@ public interface IGuildQuestionService
     /// <param name="guildQuestionOrderDeleteDto">The information of the question to delete</param>
     /// <returns>true if the question was deleted, false otherwise</returns>
     Task<bool> DeleteGuildQuestionAsync(GuildQuestionOrderDeleteDto guildQuestionOrderDeleteDto);
-    
+
     Task<IActionResult> ReorderGuildQuestionsAsync(GuildQuestionsReorderDto guildQuestionReorderDto);
 }

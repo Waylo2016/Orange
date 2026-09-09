@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Builder;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi;
+using Orange.Api.Authentication;
 using Orange.Api.Constraints;
 using Orange.Api.Interfaces;
 using Orange.Api.Services;
@@ -26,6 +28,19 @@ public class Program
 
         builder.AddNpgsqlDbContext<ApplicationDbContext>(connectionName: "OrangeDb");
 
+        builder.Services
+            .AddAuthentication(ApiKeyAuthenticationOptions.DefaultScheme)
+            .AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(
+                ApiKeyAuthenticationOptions.DefaultScheme, options => { });
+
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy("BotOnly", policy =>
+            {
+                policy.AddAuthenticationSchemes(ApiKeyAuthenticationOptions.DefaultScheme);
+                policy.RequireAuthenticatedUser();
+            });
+        });
 
         builder.Services.AddCors(options =>
         {
@@ -79,6 +94,20 @@ public class Program
             });
             string xmlFilename = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+
+            options.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
+            {
+                Name = ApiKeyAuthenticationOptions.HeaderName,
+                Type = SecuritySchemeType.ApiKey,
+                In = ParameterLocation.Header,
+                Description = "API key for the bot. Send it in the " +
+                              $"{ApiKeyAuthenticationOptions.HeaderName} header."
+            });
+
+            options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+            {
+                { new OpenApiSecuritySchemeReference("ApiKey", document), new List<string>() }
+            });
         });
 
         //register routeoptions for unsigned params
@@ -105,6 +134,7 @@ public class Program
         app.UseHttpsRedirection();
         app.UseCors("allowedOrigins");
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapDefaultEndpoints();

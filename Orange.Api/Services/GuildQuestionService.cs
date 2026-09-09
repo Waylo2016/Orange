@@ -34,7 +34,7 @@ public class GuildQuestionService(ApplicationDbContext _context, ILogger<GuildQu
                 QuestionOrder = gq.QuestionOrder,
                 Question = gq.Question
             }).ToList();
-        
+
         return new GuildQuestionGetBatchDto()
         {
             GuildId = guildIdDto.GuildId,
@@ -116,7 +116,7 @@ public class GuildQuestionService(ApplicationDbContext _context, ILogger<GuildQu
             _logger.LogWarning("Guild question {QuestionId} not found in guild {GuildId}.", questionId, guildId);
             throw new NotFoundException($"Question {questionId} was not found.");
         }
-        
+
         question.Question = dto.Question;
 
         await _context.SaveChangesAsync(cancellationToken);

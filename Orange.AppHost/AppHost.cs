@@ -27,6 +27,7 @@ public class Program
         var discordClientId = builder.AddParameter("DiscordClientId", secret: true);
         var discordDevGuildId = builder.AddParameter("DevGuildId", secret: true);
         var postgresUsername = builder.AddParameter("postgres-username", secret: true);
+        var apiKeyParam = builder.AddParameter("ApiKey", secret: true);
 
         var seq = builder.AddSeq("seq")
             .ExcludeFromManifest()
@@ -71,6 +72,7 @@ public class Program
         {
             api = builder.AddProject<Projects.Orange_Api>("orange-api")
                 .WithHttpEndpoint(8080, name: "http")
+                .WithEnvironment("Api__Key", apiKeyParam)
                 .WithReference(seq);
 
             if (postgresdb is not null)
@@ -107,6 +109,7 @@ public class Program
                 .WithEnvironment("Discord__Api__Key", discordApiKey)
                 .WithEnvironment("Discord__Client__Id", discordClientId)
                 .WithEnvironment("Discord__DevGuildId", discordDevGuildId)
+                .WithEnvironment("Api__ApiKey", apiKeyParam)
                 .WithReference(seq)
                 .WithReference(api)
                 .WaitFor(api);
