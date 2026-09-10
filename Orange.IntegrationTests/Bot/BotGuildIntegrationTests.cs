@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
 using Discord;
-using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Orange.Bot.Events;
 using Orange.IntegrationTests.Helpers;
@@ -10,8 +11,10 @@ namespace Orange.IntegrationTests.Bot;
 public class BotGuildIntegrationTests(ITestOutputHelper output)
 {
     private static readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(10);
-
-
+    
+    private static readonly ILogger<GuildEvents> _nsubLogger = Substitute.For<ILogger<GuildEvents>>();
+    private static readonly IConfiguration _nsubConfiguration = Substitute.For<IConfiguration>();
+    
     [Fact]
     public async Task TestBotAndApiHealth()
     {
@@ -108,7 +111,7 @@ public class BotGuildIntegrationTests(ITestOutputHelper output)
 
         int countBefore = await apiClient.GetFromJsonAsync<int>("/api/v1/Guild/count", cancellationToken);
 
-        var guildEvents = new GuildEvents(NullLogger<GuildEvents>.Instance, apiClient);
+        var guildEvents = new GuildEvents(_nsubLogger, apiClient, _nsubConfiguration);
         await guildEvents.OnGuildJoining(substituteGuild);
 
         int countAfter = await apiClient.GetFromJsonAsync<int>("/api/v1/Guild/count", cancellationToken);
@@ -151,7 +154,7 @@ public class BotGuildIntegrationTests(ITestOutputHelper output)
             .WaitAsync(DefaultTimeout, cancellationToken);
 
         var apiClient = app.CreateHttpClient(orangeApi);
-        var guildEvents = new GuildEvents(NullLogger<GuildEvents>.Instance, apiClient);
+        var guildEvents = new GuildEvents(_nsubLogger, apiClient, _nsubConfiguration);
 
         // first we have to join the guild to ensure it exists in the API before we can leave it
         await guildEvents.OnGuildJoining(substituteGuild);

@@ -109,7 +109,7 @@ public class Program
                 .WithEnvironment("Discord__Api__Key", discordApiKey)
                 .WithEnvironment("Discord__Client__Id", discordClientId)
                 .WithEnvironment("Discord__DevGuildId", discordDevGuildId)
-                .WithEnvironment("Api__ApiKey", apiKeyParam)
+                .WithEnvironment("Api__Key", apiKeyParam)
                 .WithReference(seq)
                 .WithReference(api)
                 .WaitFor(api);
