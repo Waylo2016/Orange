@@ -22,7 +22,7 @@ public interface IGuildQuestionService
     /// <param name="guildId">The ID of the guild</param>
     /// <param name="questionId">The ID of the question</param>
     /// <returns>a guild question</returns>
-    Task<GuildQuestionGetDto> GetGuildQuestionByIdAsync(ulong guildId, int questionId);
+    Task<GuildQuestionGetDto> GetGuildQuestionByOrderAsync(ulong guildId, int questionId);
 
     /// <summary>
     /// Creates a new guild question in the database

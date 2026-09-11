@@ -46,18 +46,18 @@ public class GuildQuestionService(ApplicationDbContext _context, ILogger<GuildQu
     /// This method is invoked wanting to see a specific guild question by its ID
     /// </summary>
     /// <param name="guildId"></param>
-    /// <param name="questionId"></param>
+    /// <param name="questionOrder"></param>
     /// <returns>the single question asked</returns>
     /// <exception cref="NotFoundException">thrown when no question is found</exception>
-    public async Task<GuildQuestionGetDto> GetGuildQuestionByIdAsync(ulong guildId, int questionId)
+    public async Task<GuildQuestionGetDto> GetGuildQuestionByOrderAsync(ulong guildId, int questionOrder)
     {
         var guildQuestion = await _context.GuildQuestions
-            .FirstOrDefaultAsync(gq => gq.Id == questionId && gq.GuildId == guildId);
+            .FirstOrDefaultAsync(gq => gq.QuestionOrder == questionOrder && gq.GuildId == guildId);
 
         if (guildQuestion == null)
         {
-            _logger.LogWarning("Guild question with guild ID {Id} and question ID {QuestionId} not found.", guildId, questionId);
-            throw new NotFoundException($"Guild question with ID {guildId} not found.");
+            _logger.LogWarning("Guild question with guild ID {Id} and question order {QuestionId} not found.", guildId, questionOrder);
+            throw new NotFoundException($"Guild question with guild ID {guildId} and question order {questionOrder} not found.");
         }
 
         return new GuildQuestionGetDto()

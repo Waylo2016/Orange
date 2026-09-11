@@ -172,7 +172,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
             QuestionOrder = questionOrder1
         });
 
-        var retrievedQuestion = await _guildQuestionService.GetGuildQuestionByIdAsync(guildId, questionOrder1);
+        var retrievedQuestion = await _guildQuestionService.GetGuildQuestionByOrderAsync(guildId, questionOrder1);
 
         // Assert
         Assert.Multiple(() =>

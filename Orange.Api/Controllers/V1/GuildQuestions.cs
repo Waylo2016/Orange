@@ -74,16 +74,16 @@ public class GuildQuestionsController(IGuildQuestionService guildQuestionService
     /// TODO: IGuildQuestionService has no lookup by question ID yet, only by question order - see TODO.md.
     /// </remarks>
     /// <param name="guildId">The ID of the guild</param>
-    /// <param name="questionId">The ID of the question</param>
+    /// <param name="questionOrder">The order of the question</param>
     /// <returns>the specified question</returns>
     [HttpGet("{questionId:int}")]
     [ProducesResponseType(typeof(GuildQuestionGetBatchDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<GuildQuestionGetBatchDto>> GetGuildQuestionById([FromRoute] ulong guildId, [FromRoute] int questionId)
+    public async Task<ActionResult<GuildQuestionGetBatchDto>> GetGuildQuestionById([FromRoute] ulong guildId, [FromRoute] int questionOrder)
     {
         try
         {
-            var question = await guildQuestionService.GetGuildQuestionByIdAsync(guildId, questionId);
+            var question = await guildQuestionService.GetGuildQuestionByOrderAsync(guildId, questionOrder);
 
             return Ok(question);
         }
