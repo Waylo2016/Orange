@@ -72,6 +72,6 @@ public class GuildsController(IGuildService guildService) : ControllerBase
         int count = await guildService.GetGuildCountAsync();
         return Ok(count);
     }
-    
+
     //TODO: maybe change it so the leave server can be called by people logged into the web dashboard
 }

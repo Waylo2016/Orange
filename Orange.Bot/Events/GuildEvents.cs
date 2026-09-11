@@ -19,9 +19,9 @@ public class GuildEvents(
     public async Task OnGuildJoining(IGuild guild)
     {
         logger.LogInformation("[{Source}] Joined guild: {GuildId}, {GuildName}", "Bot", guild.Id, guild.Name);
-        
+
         HttpRequestMessage request = new HttpRequestMessage(
-            HttpMethod.Post, 
+            HttpMethod.Post,
             "/api/v1/Guilds/");
         request.Headers.Add("X-API-Key", value: configuration["Api:Key"]);
         request.Content = JsonContent.Create(new GuildJoinDTO
@@ -29,34 +29,34 @@ public class GuildEvents(
             GuildId = guild.Id,
             GuildName = guild.Name
         });
-        
+
         HttpResponseMessage response = await httpClient.SendAsync(request);
-        
+
         response.EnsureSuccessStatusCode();
-        
-        
-        
+
+
+
         if (!response.IsSuccessStatusCode)
         {
             logger.LogError("[{Source}] Failed to join guild: {GuildId}", "Bot", guild.Id);
-            
+
         }
-        
+
     }
-    
+
     public async Task OnGuildLeave(IGuild guild)
     {
         logger.LogInformation("[{Source}] Left guild: {GuildId}, {GuildName}", "Bot", guild.Id, guild.Name);
-        
+
         HttpRequestMessage request = new HttpRequestMessage(
-            HttpMethod.Delete, 
+            HttpMethod.Delete,
             $"/api/v1/Guilds/{guild.Id}");
         request.Headers.Add("X-API-Key", value: configuration["Api:Key"]);
-        
+
         HttpResponseMessage response = await httpClient.SendAsync(request);
-        
+
         response.EnsureSuccessStatusCode();
-        
+
         if (!response.IsSuccessStatusCode)
         {
             logger.LogError("[{Source}] Failed to leave guild: {GuildId}", "Bot", guild.Id);
