@@ -15,11 +15,11 @@ public class Program
         builder.RootComponents.Add<App>("#app");
         builder.RootComponents.Add<HeadOutlet>("head::after");
         
-        var apiBaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}_api/orangeapi/");
-        
-        builder.Services.AddHttpClient<OrangeApiClient>("OrangeApi", client =>
+        var apiBaseUrl = builder.Configuration.GetValue<string>("ApiBaseUrl") 
+                         ?? throw new InvalidOperationException("API base URL is not configured.");
+        builder.Services.AddHttpClient<OrangeQuestionApiClient>("OrangeApi", client =>
         {
-            client.BaseAddress = apiBaseAddress;
+            client.BaseAddress = new Uri(apiBaseUrl);
         });
 
         builder.Services.AddMudServices();

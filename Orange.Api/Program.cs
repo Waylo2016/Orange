@@ -49,7 +49,7 @@ public class Program
                 policy =>
             {
                 policy
-                    .WithOrigins($"{builder.Configuration["Api:BaseUrl"]}")
+                    .WithOrigins("https://localhost:8082", "https://localhost:8081", "https://api.orange.waylo.tech", "https://orange.waylo.tech")
                     .AllowAnyHeader()
                     .AllowAnyMethod();
             });

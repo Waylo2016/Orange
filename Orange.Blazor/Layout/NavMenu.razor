@@ -1,8 +1,11 @@
-﻿<MudPaper Width="250px" Class="py-3" Elevation="0">
+﻿@inject OrangeQuestionApiClient questionApiClient
+@inject IConfiguration Configuration
+
+<MudPaper Width="250px" Class="py-3" Elevation="0">
     <MudNavMenu>
         <MudText Typo="Typo.h6" Class="px-4">Orange</MudText>
         <MudDivider Class="my-2"/>
-        @foreach(var server in DiscordServers)
+        @foreach(var server in discordServerNames)
         {
             <MudNavGroup 
                 Title="@server" 
@@ -11,11 +14,11 @@
                 Class="mud-primary-text"
                 >
                
-                @for (int i = 1; i <= submenuCounts[server]; i++)
-                {
-                    var localI = i;
-                    <MudNavLink Href="#">Question @localI</MudNavLink>
-                }
+                @* @for (int i = 1; i <= submenuCounts[server]; i++) *@
+                @* { *@
+                @*     var localI = i; *@
+                @*     <MudNavLink Href="#">Question @localI</MudNavLink> *@
+                @* } *@
             </MudNavGroup>
         }
     </MudNavMenu>
@@ -27,21 +30,17 @@
 
     private bool EnableCollapsedChildNavigation = true;
 
-    private readonly List<string> DiscordServers =
-    [
-        "Server 1",
-        "Server 2",
-        "Server 3"
-    ];
-
     private Dictionary<string, int> submenuCounts = new();
 
-    protected override void OnInitialized()
+    private List<string> discordServers = new();
+    private List<string> discordServerNames = new();
+    
+    protected override async Task OnInitializedAsync()
     {
-        foreach (var server in DiscordServers)
-        {
-            submenuCounts[server] = Random.Shared.Next(1, 11); // 1 t/m 10
-        }
+        // TODO: Replace this with the actual guild ID from the OAuth flow.
+        var guildId = ulong.Parse(Configuration["Discord:GuildId"]);
+        var questions = await questionApiClient.GetGuildQuestionsAsync(guildId.ToString(), CancellationToken.None);
+        discordServerNames.Add(questions.GuildName);
     }
 
 }

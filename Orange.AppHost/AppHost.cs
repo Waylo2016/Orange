@@ -95,6 +95,7 @@ public class Program
                 .WithReference(seq);
 
             var gateway = builder.AddBlazorGateway("blazor-gateway")
+                .WithHttpEndpoint(port: 8082, name: "https")
                 .WithExternalHttpEndpoints();
 
             gateway.WithBlazorClientApp(blazorApp);

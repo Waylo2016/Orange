@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using Orange.Blazor.DTO.Questions;
 
-namespace Orange.Api.DTO.GuildQuestion;
+namespace Orange.Blazor.DTO.Questions;
 
 public class GuildQuestionGetBatchDto
 {
