@@ -16,11 +16,12 @@ public class Program
         builder.RootComponents.Add<HeadOutlet>("head::after");
         
         var apiBaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}_api/orangeapi/");
-
-        builder.Services.AddHttpClient<OrangeApiClient>(client =>
+        
+        builder.Services.AddHttpClient<OrangeApiClient>("OrangeApi", client =>
         {
             client.BaseAddress = apiBaseAddress;
         });
+
         builder.Services.AddMudServices();
         
         
