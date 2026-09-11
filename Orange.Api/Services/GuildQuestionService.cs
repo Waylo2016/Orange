@@ -47,7 +47,6 @@ public class GuildQuestionService(ApplicationDbContext _context, ILogger<GuildQu
     /// </summary>
     /// <param name="guildId"></param>
     /// <param name="questionId"></param>
-    /// <param name="guildQuestionOrderDeleteDto">DTO containing guild ID and question Order</param>
     /// <returns>the single question asked</returns>
     /// <exception cref="NotFoundException">thrown when no question is found</exception>
     public async Task<GuildQuestionGetDto> GetGuildQuestionByIdAsync(ulong guildId, int questionId)
