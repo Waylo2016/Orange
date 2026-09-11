@@ -14,4 +14,5 @@ public class GuildQuestion
 
     [JsonIgnore]
     public Guild Guild { get; set; } = null!;
+
 }
