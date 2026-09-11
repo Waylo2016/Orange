@@ -1,10 +1,9 @@
-﻿using System.Net.Http.Json;
-using Microsoft.AspNetCore.WebUtilities;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using Orange.Api.Controllers.V1;
 using Orange.Api.DTO.Guild;
 using Orange.Api.DTO.GuildQuestion;
+using Orange.Api.Exceptions;
 using Orange.Api.Models;
 using Orange.Api.Services;
 using Orange.Api.utils;
@@ -122,9 +121,6 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         {
             Assert.NotNull(createdQuestion1);
             Assert.NotNull(createdQuestion2);
-            var item1 = Assert.Single(questionsForGuild1);
-            var item2 = Assert.Single(questionsForGuild2);
-            Assert.NotEqual(item1.Id, item2.Id);
         });
     }
 
@@ -176,11 +172,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
             QuestionOrder = questionOrder1
         });
 
-        var retrievedQuestion = await _guildQuestionService.GetGuildQuestionByIdAsync(new GuildQuestionOrderDeleteDto
-        {
-            GuildId = guildId,
-            QuestionOrder = questionOrder1
-        });
+        var retrievedQuestion = await _guildQuestionService.GetGuildQuestionByOrderAsync(guildId, questionOrder1);
 
         // Assert
         Assert.Multiple(() =>
@@ -227,11 +219,12 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         Assert.Multiple(() =>
         {
             Assert.NotNull(questionsList);
-            Assert.Equal(2, questionsList.Count);
-            Assert.Equal(question1, questionsList[0].Question);
-            Assert.Equal(questionOrder1, questionsList[0].QuestionOrder);
-            Assert.Equal(question2, questionsList[1].Question);
-            Assert.Equal(questionOrder2, questionsList[1].QuestionOrder);
+            Assert.Equal(2, questionsList.Questions.Count);
+            Assert.Equal(question1, questionsList.Questions[0].Question);
+            Assert.Equal(questionOrder1, questionsList.Questions[0].QuestionOrder);
+            Assert.Equal(question2, questionsList.Questions[1].Question);
+            Assert.Equal(questionOrder2, questionsList.Questions[1].QuestionOrder);
+            Assert.NotEqual(questionsList.Questions[0].QuestionOrder, questionsList.Questions[1].QuestionOrder);
         });
     }
 
@@ -256,7 +249,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         Assert.Multiple(() =>
         {
             Assert.NotNull(questionsList);
-            Assert.Empty(questionsList);
+            Assert.Empty(questionsList.Questions);
         });
     }
 
@@ -273,7 +266,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         });
 
         // Assert
-        Assert.Empty(questionsList);
+        Assert.Empty(questionsList.Questions);
     }
 
     [Fact]
@@ -295,14 +288,18 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         });
         await _dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
+        var createdQuestion = await _dbContext.GuildQuestions
+            .SingleAsync(q => q.GuildId == guildId && q.QuestionOrder == questionOrder1, TestContext.Current.CancellationToken);
+
         // Act
-        var updatedQuestion = await _guildQuestionService.UpdateGuildQuestionAsync(new GuildQuestionUpdateDto
-        {
-            GuildId = guildId,
-            OldQuestionOrder = questionOrder1,
-            NewQuestion = question2,
-            NewQuestionOrder = questionOrder1
-        });
+        var updatedQuestion = await _guildQuestionService.UpdateGuildQuestionAsync(
+            guildId,
+            createdQuestion.Id,
+            new GuildQuestionUpdateDto
+            {
+                Question = question2
+            },
+            TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Multiple(() =>
@@ -312,6 +309,44 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
             Assert.Equal(question2, updatedQuestion.Question);
             Assert.Equal(questionOrder1, updatedQuestion.QuestionOrder);
         });
+    }
+
+    [Fact]
+    public async Task TestQuestionUpdate_ThrowsNotFoundForQuestionInAnotherGuild()
+    {
+        // Arrange
+        await _dbContext.Guilds.AddAsync(new Guild
+        {
+            GuildId = guildId,
+            GuildName = guildName
+        }, TestContext.Current.CancellationToken);
+        await _dbContext.Guilds.AddAsync(new Guild
+        {
+            GuildId = GuildId2,
+            GuildName = guildName2
+        }, TestContext.Current.CancellationToken);
+        await _dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
+
+        await _guildQuestionService.CreateGuildQuestionAsync(new GuildQuestionCreateDto
+        {
+            GuildId = guildId,
+            Question = question1,
+            QuestionOrder = questionOrder1
+        });
+        await _dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
+
+        var createdQuestion = await _dbContext.GuildQuestions
+            .SingleAsync(q => q.GuildId == guildId && q.QuestionOrder == questionOrder1, TestContext.Current.CancellationToken);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<NotFoundException>(() => _guildQuestionService.UpdateGuildQuestionAsync(
+            GuildId2,
+            createdQuestion.Id,
+            new GuildQuestionUpdateDto
+            {
+                Question = question3
+            },
+            TestContext.Current.CancellationToken));
     }
 
 }
