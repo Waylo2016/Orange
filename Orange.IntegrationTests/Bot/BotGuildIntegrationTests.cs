@@ -11,10 +11,10 @@ namespace Orange.IntegrationTests.Bot;
 public class BotGuildIntegrationTests(ITestOutputHelper output)
 {
     private static readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(10);
-    
+
     private static readonly ILogger<GuildEvents> _nsubLogger = Substitute.For<ILogger<GuildEvents>>();
     private static readonly IConfiguration _nsubConfiguration = Substitute.For<IConfiguration>();
-    
+
     [Fact]
     public async Task TestBotAndApiHealth()
     {
