@@ -12,14 +12,14 @@ public class OrangeQuestionApiClient(HttpClient httpClient, ILogger<OrangeQuesti
         PropertyNameCaseInsensitive = true,
         Converters = { new JsonStringEnumConverter() }
     };
-    
+
     public async Task<GuildQuestionGetBatchDto?> GetGuildQuestionsAsync(string guildId, CancellationToken ct)
     {
         var path = $"/api/v1/guilds/{Uri.EscapeDataString(guildId)}/questions";
         return await GetAsync<GuildQuestionGetBatchDto?>(path, ct);
     }
-    
-    
+
+
     private async Task<TResponse?> GetAsync<TResponse>(string path, CancellationToken ct)
     {
         try
@@ -32,7 +32,7 @@ public class OrangeQuestionApiClient(HttpClient httpClient, ILogger<OrangeQuesti
             throw;
         }
     }
-    
+
 
     private async Task<TResponse> PostAsync<TRequest, TResponse>(
         string path,
@@ -51,7 +51,7 @@ public class OrangeQuestionApiClient(HttpClient httpClient, ILogger<OrangeQuesti
 
         return result;
     }
-    
+
     private async Task<TResponse> PutAsync<TRequest, TResponse>(
         string path,
         TRequest body,
