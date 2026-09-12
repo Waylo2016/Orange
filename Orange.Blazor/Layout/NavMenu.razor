@@ -5,16 +5,16 @@
     <MudNavMenu>
         <MudText Typo="Typo.h6" Class="px-4">Orange</MudText>
         <MudDivider Class="my-2"/>
-        @foreach(var server in discordServerNames)
+        @foreach(var server in _discordServerNames)
         {
             <MudNavGroup 
                 Title="@server" 
                 Icon="@Icons.Custom.Brands.Discord" 
-                Expanded="@Expanded" EnableCollapsedChildNavigation="@EnableCollapsedChildNavigation"
+                Expanded="@_expanded" enableCollapsedChildNavigation="@_enableCollapsedChildNavigation"
                 Class="mud-primary-text"
                 >
                 
-                @foreach (var question in serverQuestions)
+                @foreach (var question in _serverQuestions)
                 {
                     <MudNavLink>Question @question.Key</MudNavLink>
                 }
@@ -25,21 +25,21 @@
 
 @code {
 
-    private bool Expanded = true;
+    private readonly bool _expanded = true;
 
-    private bool EnableCollapsedChildNavigation = true;
+    private readonly bool _enableCollapsedChildNavigation = true;
 
-    private Dictionary<int, string?> serverQuestions = new();
-    private List<string> discordServerNames = new();
+    private readonly Dictionary<int, string?> _serverQuestions = new();
+    private readonly List<string> _discordServerNames = [];
     
     protected override async Task OnInitializedAsync()
     {
         // TODO: Replace this with the actual guild ID from the OAuth flow.
-        var questions = await questionApiClient.GetGuildQuestionsAsync(Configuration["Discord:DevGuildId"], CancellationToken.None);
-        discordServerNames.Add(questions!.GuildName);
+        var questions = await questionApiClient.GetGuildQuestionsAsync(Configuration["Discord:DevGuildId"]!, CancellationToken.None);
+        _discordServerNames.Add(questions!.GuildName);
         if (questions.Questions != null)
         {
-            serverQuestions.Add(
+            _serverQuestions.Add(
                 questions.Questions
                     .Select(sq => sq.QuestionOrder)
                     .FirstOrDefault(), 

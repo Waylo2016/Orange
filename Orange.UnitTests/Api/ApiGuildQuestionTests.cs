@@ -219,7 +219,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         Assert.Multiple(() =>
         {
             Assert.NotNull(questionsList);
-            Assert.Equal(2, questionsList.Questions.Count);
+            Assert.Equal(2, questionsList.Questions!.Count);
             Assert.Equal(question1, questionsList.Questions[0].Question);
             Assert.Equal(questionOrder1, questionsList.Questions[0].QuestionOrder);
             Assert.Equal(question2, questionsList.Questions[1].Question);
@@ -249,7 +249,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         Assert.Multiple(() =>
         {
             Assert.NotNull(questionsList);
-            Assert.Empty(questionsList.Questions);
+            Assert.Empty(questionsList.Questions!);
         });
     }
 
@@ -266,7 +266,7 @@ public class ApiGuildQuestionTests(SqliteFixture sqliteFixture)
         });
 
         // Assert
-        Assert.Empty(questionsList.Questions);
+        Assert.Empty(questionsList.Questions!);
     }
 
     [Fact]
