@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 
 
@@ -7,28 +5,34 @@ namespace Orange.Blazor;
 
 public class Program
 {
-    public static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
 
-        var builder = WebAssemblyHostBuilder.CreateDefault(args);
-
-        builder.RootComponents.Add<App>("#app");
-        builder.RootComponents.Add<HeadOutlet>("head::after");
+        var builder = WebApplication.CreateBuilder(args);
         
-        var apiBaseUrl = builder.Configuration.GetValue<string>("ApiBaseUrl") 
-                         ?? throw new InvalidOperationException("API base URL is not configured.");
-        builder.Services.AddHttpClient<OrangeQuestionApiClient>("OrangeApi", client =>
-        {
-            client.BaseAddress = new Uri(apiBaseUrl);
-        });
-
+        
+        builder.AddServiceDefaults();
+        
+        builder.Services.AddRazorComponents()
+            .AddInteractiveServerComponents();
+        
         builder.Services.AddMudServices();
         
+
+        builder.Services.AddHttpClient<OrangeQuestionApiClient>(client =>
+        {
+            client.BaseAddress = new Uri("https+http://orange-api")
+                                 ?? throw new InvalidOperationException("API base URL is not configured.");
+        });
         
         var app = builder.Build();
-
-
-
-        await app.RunAsync();
+        
+        app.UseStaticFiles();
+        app.UseAntiforgery();
+        
+        app.MapRazorComponents<App>()
+            .AddInteractiveServerRenderMode();
+        
+        app.Run();
     }
 }

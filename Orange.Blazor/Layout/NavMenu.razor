@@ -38,9 +38,8 @@
     protected override async Task OnInitializedAsync()
     {
         // TODO: Replace this with the actual guild ID from the OAuth flow.
-        var guildId = ulong.Parse(Configuration["Discord:GuildId"]);
-        var questions = await questionApiClient.GetGuildQuestionsAsync(guildId.ToString(), CancellationToken.None);
-        discordServerNames.Add(questions.GuildName);
+        var questions = await questionApiClient.GetGuildQuestionsAsync(Configuration["Discord:DevGuildId"], CancellationToken.None);
+        discordServerNames.Add(questions!.GuildName);
     }
 
 }
