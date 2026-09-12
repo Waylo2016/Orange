@@ -41,24 +41,28 @@ public class GuildQuestionsController(IGuildQuestionService guildQuestionService
     /// <param name="guildQuestion">The question to create</param>
     /// <returns>The created question</returns>
     [HttpPost]
-    [ProducesResponseType(typeof(GuildQuestionGetBatchDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(GuildQuestionCreateDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<GuildQuestionGetBatchDto>> CreateGuildQuestion(
+    public async Task<ActionResult<GuildQuestionCreateDto>> CreateGuildQuestion(
         [FromRoute] ulong guildId,
         [FromBody] GuildQuestionCreateDto guildQuestion)
     {
-        guildQuestion.GuildId = guildId;
-
         try
         {
             var createdQuestion = await guildQuestionService.CreateGuildQuestionAsync(guildQuestion);
             return CreatedAtAction(
-                nameof(GetGuildQuestionById),
-                new
+                actionName: nameof(GetGuildQuestionByOrder),
+                routeValues: new
                 {
-                    guildId = createdQuestion.GuildId
+                    guildId = createdQuestion.GuildId,
+                    questionOrder = createdQuestion.QuestionOrder
                 },
-                createdQuestion);
+                value: new GuildQuestionGetDto
+                {
+                    GuildId = createdQuestion.GuildId,
+                    QuestionOrder = createdQuestion.QuestionOrder,
+                    Question = createdQuestion.Question
+                });
         }
         catch (Exception e)
         {
@@ -76,10 +80,10 @@ public class GuildQuestionsController(IGuildQuestionService guildQuestionService
     /// <param name="guildId">The ID of the guild</param>
     /// <param name="questionOrder">The order of the question</param>
     /// <returns>the specified question</returns>
-    [HttpGet("{questionId:int}")]
+    [HttpGet("{questionOrder:int}")]
     [ProducesResponseType(typeof(GuildQuestionGetBatchDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<GuildQuestionGetBatchDto>> GetGuildQuestionById([FromRoute] ulong guildId, [FromRoute] int questionOrder)
+    public async Task<ActionResult<GuildQuestionGetDto>> GetGuildQuestionByOrder([FromRoute] ulong guildId, [FromRoute] int questionOrder)
     {
         try
         {

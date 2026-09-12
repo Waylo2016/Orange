@@ -90,14 +90,12 @@ public class Program
         // Dashboard + gateway
         if (includeDashboard && api is not null)
         {
-            var blazorApp = builder.AddBlazorWasmProject<Projects.Orange_Blazor>("web-dashboard")
+            var blazorApp = builder.AddProject<Projects.Orange_Blazor>("web-dashboard")
                 .WithReference(api)
-                .WithReference(seq);
-
-            var gateway = builder.AddBlazorGateway("blazor-gateway")
+                .WithReference(seq)
+                .WithEnvironment("Discord__DevGuildId", discordDevGuildId)
+                .WithHttpEndpoint(port: 8082, name: "https")
                 .WithExternalHttpEndpoints();
-
-            gateway.WithBlazorClientApp(blazorApp);
         }
 
         // Bot
@@ -108,7 +106,6 @@ public class Program
                 .WithHttpHealthCheck("/health")
                 .WithEnvironment("Discord__Api__Key", discordApiKey)
                 .WithEnvironment("Discord__Client__Id", discordClientId)
-                .WithEnvironment("Discord__DevGuildId", discordDevGuildId)
                 .WithEnvironment("Api__Key", apiKeyParam)
                 .WithReference(seq)
                 .WithReference(api)

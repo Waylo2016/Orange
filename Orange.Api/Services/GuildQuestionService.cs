@@ -35,9 +35,15 @@ public class GuildQuestionService(ApplicationDbContext _context, ILogger<GuildQu
                 Question = gq.Question
             }).ToList();
 
+        var guildName = await _context.Guilds
+            .Where(g => g.GuildId == guildIdDto.GuildId)
+            .Select(g => g.GuildName)
+            .FirstOrDefaultAsync();
+
         return new GuildQuestionGetBatchDto()
         {
             GuildId = guildIdDto.GuildId,
+            GuildName = guildName!,
             Questions = orderedQuestions
         };
     }
