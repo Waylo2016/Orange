@@ -27,6 +27,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .Property(gq => gq.GuildId)
             .IsRequired()
             .ValueGeneratedNever();
+        
+        modelBuilder.Entity<GuildQuestion>()
+            .HasIndex(gq => new { gq.GuildId, gq.QuestionOrder })
+            .IsUnique();
 
         // 1-* relationship between Guild and GuildQuestion
         modelBuilder.Entity<Guild>()

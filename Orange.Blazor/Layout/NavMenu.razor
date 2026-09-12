@@ -13,12 +13,11 @@
                 Expanded="@Expanded" EnableCollapsedChildNavigation="@EnableCollapsedChildNavigation"
                 Class="mud-primary-text"
                 >
-               
-                @* @for (int i = 1; i <= submenuCounts[server]; i++) *@
-                @* { *@
-                @*     var localI = i; *@
-                @*     <MudNavLink Href="#">Question @localI</MudNavLink> *@
-                @* } *@
+                
+                @foreach (var question in serverQuestions)
+                {
+                    <MudNavLink>Question @question.Key</MudNavLink>
+                }
             </MudNavGroup>
         }
     </MudNavMenu>
@@ -30,9 +29,7 @@
 
     private bool EnableCollapsedChildNavigation = true;
 
-    private Dictionary<string, int> submenuCounts = new();
-
-    private List<string> discordServers = new();
+    private Dictionary<int, string?> serverQuestions = new();
     private List<string> discordServerNames = new();
     
     protected override async Task OnInitializedAsync()
@@ -40,6 +37,17 @@
         // TODO: Replace this with the actual guild ID from the OAuth flow.
         var questions = await questionApiClient.GetGuildQuestionsAsync(Configuration["Discord:DevGuildId"], CancellationToken.None);
         discordServerNames.Add(questions!.GuildName);
+        if (questions.Questions != null)
+        {
+            serverQuestions.Add(
+                questions.Questions
+                    .Select(sq => sq.QuestionOrder)
+                    .FirstOrDefault(), 
+                questions.Questions
+                    .Select(sq => sq.Question)
+                    .ToString()
+                );
+        }
     }
 
 }

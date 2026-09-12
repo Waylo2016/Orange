@@ -21,8 +21,7 @@ public class Program
 
         builder.Services.AddHttpClient<OrangeQuestionApiClient>(client =>
         {
-            client.BaseAddress = new Uri("https+http://orange-api")
-                                 ?? throw new InvalidOperationException("API base URL is not configured.");
+            client.BaseAddress = new Uri("https+http://orange-api");
         });
         
         var app = builder.Build();
