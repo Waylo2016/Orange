@@ -37,6 +37,7 @@ public class Program
             GatewayIntents = GatewayIntents.Guilds
                              | GatewayIntents.DirectMessages
                              | GatewayIntents.MessageContent
+                             | GatewayIntents.GuildMessages
         }));
 
         builder.Services.AddSingleton(sp =>
