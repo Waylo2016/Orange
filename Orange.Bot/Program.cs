@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Orange.Bot.API;
 using Orange.Bot.Events;
 using Orange.Bot.HealthChecks;
 using Orange.Bot.Interfaces;
@@ -52,6 +53,11 @@ public class Program
                 failureStatus: HealthStatus.Unhealthy);
 
         builder.Services.AddHttpClient<IGuildEvents, GuildEvents>(client =>
+        {
+            client.BaseAddress = new Uri("https+http://orange-api")
+                                 ?? throw new InvalidOperationException("API base URL is not configured.");
+        });
+        builder.Services.AddHttpClient<QuestionApiClient>(client =>
         {
             client.BaseAddress = new Uri("https+http://orange-api")
                                  ?? throw new InvalidOperationException("API base URL is not configured.");

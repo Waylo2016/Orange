@@ -43,6 +43,7 @@ public class GuildQuestionsController(IGuildQuestionService guildQuestionService
     [HttpPost]
     [ProducesResponseType(typeof(GuildQuestionCreateDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<GuildQuestionCreateDto>> CreateGuildQuestion(
         [FromRoute] ulong guildId,
         [FromBody] GuildQuestionCreateDto guildQuestion)
@@ -63,6 +64,10 @@ public class GuildQuestionsController(IGuildQuestionService guildQuestionService
                     QuestionOrder = createdQuestion.QuestionOrder,
                     Question = createdQuestion.Question
                 });
+        }
+        catch (InvalidOperationException e)
+        {
+            return Conflict(e.Message);
         }
         catch (Exception e)
         {

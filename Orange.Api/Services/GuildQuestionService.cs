@@ -81,7 +81,15 @@ public class GuildQuestionService(ApplicationDbContext _context, ILogger<GuildQu
     /// <returns>The created question</returns>
     public async Task<GuildQuestionGetDto> CreateGuildQuestionAsync(GuildQuestionCreateDto guildQuestion)
     {
-        var newGuildQuestion = new GuildQuestion
+        GuildIdDTO guildIdDto = new GuildIdDTO { GuildId = guildQuestion.GuildId };
+        GuildQuestionGetBatchDto existingQuestions = await GetGuildQuestionsPerGuildAsync(guildIdDto);
+
+        if (existingQuestions.Questions!.Any(q => q.QuestionOrder == guildQuestion.QuestionOrder))
+        {
+            throw new InvalidOperationException("A question with this order already exists in the guild.");
+        }
+
+        GuildQuestion newGuildQuestion = new GuildQuestion
         {
             GuildId = guildQuestion.GuildId,
             Question = guildQuestion.Question,
