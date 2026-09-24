@@ -1,31 +1,28 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Discord;
-using Discord.WebSocket;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using NetCord.Gateway;
 
 namespace Orange.Bot.HealthChecks;
 
-public class DiscordConnectionHealthCheck(DiscordSocketClient client) : IHealthCheck
+public class DiscordConnectionHealthCheck(GatewayClient client) : IHealthCheck
 {
     public Task<HealthCheckResult> CheckHealthAsync(
         HealthCheckContext context,
         CancellationToken cancellationToken = default)
     {
-        if (client.ConnectionState == ConnectionState.Connected && client.CurrentUser is not null)
+        if (client.Status == WebSocketStatus.Ready)
         {
-            return Task.FromResult(HealthCheckResult.Healthy(
-                $"Ready as {client.CurrentUser?.Username ?? "(unknown)"}"));
+            return Task.FromResult(HealthCheckResult.Healthy("Ready"));
         }
-
-        var msg = client.ConnectionState switch
+        
+        var msg = client.Status switch
         {
-            ConnectionState.Connecting => "Connecting",
-            ConnectionState.Connected => "Ready",
-            ConnectionState.Disconnecting => "Disconnecting",
-            ConnectionState.Disconnected => "Disconnected",
-            _ => $"Unknown state: {client.ConnectionState}"
+            WebSocketStatus.Connecting => "Connecting",
+            WebSocketStatus.Ready => "Ready",
+            WebSocketStatus.Disconnected => "Disconnected",
+            _ => $"Unknown state: {client.Status}"
         };
 
         return Task.FromResult(HealthCheckResult.Degraded(msg));

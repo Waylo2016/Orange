@@ -1,15 +1,14 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Discord;
-using Discord.Interactions;
-using Discord.Rest;
-using Discord.WebSocket;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using NetCord;
+using NetCord.Gateway;
+using NetCord.Hosting.Gateway;
+using NetCord.Hosting.Services;
+
 using Orange.Bot.API;
 using Orange.Bot.Events;
 using Orange.Bot.HealthChecks;
@@ -31,20 +30,23 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddOpenTelemetry();
-        builder.Services.AddHostedService<Worker>();
 
-        builder.Services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
-        {
-            GatewayIntents = GatewayIntents.Guilds
-                             | GatewayIntents.DirectMessages
-                             | GatewayIntents.MessageContent
-                             | GatewayIntents.GuildMessages
-        }));
-
-        builder.Services.AddSingleton(sp =>
-            new InteractionService(sp.GetRequiredService<DiscordSocketClient>()));
+        builder.Services.AddDiscordGateway(options =>
+            {
+                options.Intents = GatewayIntents.Guilds
+                                  | GatewayIntents.DirectMessages
+                                  | GatewayIntents.MessageContent
+                                  | GatewayIntents.GuildMessages;
+                options.Presence = new PresenceProperties(UserStatusType.Online)
+                {
+                    Activities = [new UserActivityProperties("Your Mom", UserActivityType.Watching)]
+                };
+                options.Token = new string(builder.Configuration["Discord:Api:Key"]!
+                                           ?? throw new InvalidOperationException("Discord bot token is not configured."));
+            })
+            .AddGatewayHandlers(typeof(Program).Assembly);
+        
         builder.Services.AddSingleton<IMessageWaiter, MessageWaiter>();
-        builder.Services.AddHostedService<SlashCommandRegistrar>();
 
         // Health checks
         builder.Services.AddHealthChecks()

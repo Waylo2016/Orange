@@ -1,8 +1,9 @@
 ﻿using System.Net.Http.Json;
-using Discord;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using NetCord.Rest;
 using NSubstitute;
+using Orange.Api.Models;
 using Orange.Bot.Events;
 using Orange.IntegrationTests.Helpers;
 
@@ -87,9 +88,6 @@ public class BotGuildIntegrationTests(ITestOutputHelper output)
 
         // Discord's IGuild is the boundary we don't control, so it's fine to fake it.
         // Everything downstream of it (GuildEvents -> HTTP -> API) should be real.
-        var substituteGuild = Substitute.For<IGuild>();
-        substituteGuild.Id.Returns(guildId);
-        substituteGuild.Name.Returns(guildName);
 
         var app = await new TestAppHostBuilder()
             .WithBot()
@@ -112,7 +110,7 @@ public class BotGuildIntegrationTests(ITestOutputHelper output)
         int countBefore = await apiClient.GetFromJsonAsync<int>("/api/v1/Guild/count", cancellationToken);
 
         var guildEvents = new GuildEvents(_nsubLogger, apiClient, _nsubConfiguration);
-        await guildEvents.OnGuildJoining(substituteGuild);
+        await guildEvents.OnGuildJoining(guildId, guildName);
 
         int countAfter = await apiClient.GetFromJsonAsync<int>("/api/v1/Guild/count", cancellationToken);
 
@@ -129,13 +127,8 @@ public class BotGuildIntegrationTests(ITestOutputHelper output)
         const string discordBot = "discord-bot";
         const string orangeApi = "orange-api";
         const string guildName = "Test Guild";
-        const ulong guildId = 123456789012345678; // Example
-
-        // Discord's IGuild is the boundary we don't control, so it's fine to fake it.
-        // Everything downstream of it (GuildEvents -> HTTP -> API) should be real.
-        var substituteGuild = Substitute.For<IGuild>();
-        substituteGuild.Id.Returns(guildId);
-        substituteGuild.Name.Returns(guildName);
+        const ulong guildId = 123456789012345678;
+        
 
         var app = await new TestAppHostBuilder()
             .WithBot()
@@ -157,12 +150,11 @@ public class BotGuildIntegrationTests(ITestOutputHelper output)
         var guildEvents = new GuildEvents(_nsubLogger, apiClient, _nsubConfiguration);
 
         // first we have to join the guild to ensure it exists in the API before we can leave it
-        await guildEvents.OnGuildJoining(substituteGuild);
+        await guildEvents.OnGuildJoining(guildId, guildName);
         int countBefore = await apiClient.GetFromJsonAsync<int>("/api/v1/Guild/count", cancellationToken);
 
         // then we can leave the guild
-        await guildEvents.OnGuildLeave(substituteGuild);
-
+        await guildEvents.OnGuildLeave(guildId);
         int countAfter = await apiClient.GetFromJsonAsync<int>("/api/v1/Guild/count", cancellationToken);
 
         // Assert

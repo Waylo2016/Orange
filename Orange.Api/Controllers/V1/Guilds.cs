@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
@@ -71,6 +73,15 @@ public class GuildsController(IGuildService guildService) : ControllerBase
     {
         int count = await guildService.GetGuildCountAsync();
         return Ok(count);
+    }
+
+    [HttpGet("sync")]
+    [Authorize(AuthenticationSchemes = "ApiKey", Policy = "BotOnly")]
+    [ProducesResponseType(typeof(IEnumerable<ulong>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<ulong>>> GetGuilds()
+    {
+        var guilds = await guildService.GetGuildsAsync();
+        return Ok(guilds.Select(id => id.GuildId));
     }
 
     //TODO: maybe change it so the leave server can be called by people logged into the web dashboard

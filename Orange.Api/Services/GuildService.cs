@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Orange.Api.DTO.Guild;
@@ -39,6 +40,12 @@ public class GuildService(ApplicationDbContext _context, ILogger<GuildService> _
         await _context.SaveChangesAsync();
         _logger.LogInformation("Bot invoked leave with ID {GuildId}", guild.GuildId);
         return true;
+    }
+    
+    public async Task<List<Guild>> GetGuildsAsync()
+    {
+        return await _context.Guilds.ToListAsync();
+            
     }
 
     public async Task<int> GetGuildCountAsync()

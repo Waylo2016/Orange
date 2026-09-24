@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
+using NetCord.Gateway;
 using Orange.Bot.Interfaces;
 
 namespace Orange.Bot.Services;
 
-public class MessageWaiter(DiscordSocketClient client, ILogger<MessageWaiter> logger) : IMessageWaiter
+public class MessageWaiter(GatewayClient client, ILogger<MessageWaiter> logger) : IMessageWaiter
 {
-    public async Task<SocketMessage?> WaitForMessageAsync(
+    public async Task<Message?> WaitForMessageAsync(
         ulong userId,
         ulong channelId,
         TimeSpan timeout,
@@ -17,21 +17,21 @@ public class MessageWaiter(DiscordSocketClient client, ILogger<MessageWaiter> lo
     {
 
         // Create a TaskCompletionSource to await the message
-        var tcs = new TaskCompletionSource<SocketMessage?>(
+        var tcs = new TaskCompletionSource<Message?>(
             TaskCreationOptions.RunContinuationsAsynchronously);
 
         // Define a local function to handle incoming messages
-        Task Handler(SocketMessage message)
+        ValueTask Handler(Message message)
         {
             if (message.Author.Id == userId && message.Channel.Id == channelId)
             {
                 tcs.TrySetResult(message);
             }
-            return Task.CompletedTask;
+            return ValueTask.CompletedTask;
         }
 
         // Subscribe to the MessageReceived event
-        client.MessageReceived += Handler;
+        client.MessageCreate += Handler;
 
         // Create a linked cancellation token source to handle both the provided cancellation token and the timeout
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -50,8 +50,8 @@ public class MessageWaiter(DiscordSocketClient client, ILogger<MessageWaiter> lo
         }
         finally
         {
-            // Unsubscribe from the MessageReceived event to avoid memory leaks
-            client.MessageReceived -= Handler;
+            // Unsubscribe from the MessageCreate event to avoid memory leaks
+            client.MessageCreate -= Handler;
         }
     }
 }

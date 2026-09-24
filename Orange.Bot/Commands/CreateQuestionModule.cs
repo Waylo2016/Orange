@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
-using Discord;
-using Discord.Interactions;
-using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
+using NetCord;
+using NetCord.Gateway;
+using NetCord.Rest;
+using NetCord.Services.ApplicationCommands;
 using Orange.Api.DTO.GuildQuestion;
 using Orange.Bot.API;
 using Orange.Bot.Exceptions;
@@ -14,33 +16,55 @@ namespace Orange.Bot.Commands;
 public class CreateQuestionModule(
     ILogger<CreateQuestionModule> logger,
     IMessageWaiter messageWaiter,
-    QuestionApiClient questionApiClient) : InteractionModuleBase<SocketInteractionContext>
+    QuestionApiClient questionApiClient) : ApplicationCommandModule<SlashCommandContext>
 {
     [SlashCommand("createquestion", "Creates a new question for the guild")]
     public async Task CreateQuestion()
     {
+        
         logger.LogInformation("[{Source}] CreateQuestion command invoked by user {User}", "Bot", Context.User.Username);
-        await DeferAsync(ephemeral: true);
-        IChannel? channel = Context.Channel;
+        await Context.Interaction.SendResponseAsync(InteractionCallback.DeferredMessage(MessageFlags.Ephemeral));
+        Channel channel = Context.Channel;
 
-        var startEmbed = new EmbedBuilder()
-            .AddField("Question Creator",
-                "This command will guide you through the process of creating a new question for your Discord server. Please follow the prompts and provide the necessary information.")
-            .WithFooter(footer => footer.WithText("Question Creation Process"))
-            .WithColor(OrangeBotColors.Orange);
-
-        var questionEmbed = new EmbedBuilder()
-            .AddField("Step 1: Enter the question", "Please type the question you want to create in this channel.")
-            .WithFooter(footer => footer.WithText("Question Creation Process"))
-            .WithColor(OrangeBotColors.Orange);
+        var startEmbed = new EmbedProperties
+        {
+            Title = "Question Creation Process",
+            Color = OrangeBotColors.Orange,
+            Description =
+                "You are about to create a new question for this guild. Please follow the steps below to complete the process.",
+            Footer = new EmbedFooterProperties()
+            {
+                Text = "Question Creation Process"
+            }
+        };
+        
+        
+        var questionEmbed = new EmbedProperties
+        {
+            Title = "Step 1: Enter the question",
+            Description = "Please type the question you want to create in this channel.",
+            Color = OrangeBotColors.Orange,
+            Footer = new EmbedFooterProperties()
+            {
+                Text = "Question Creation Process"
+            }
+        };
 
         try
         {
-            await FollowupAsync(embed: startEmbed.Build(), ephemeral: true);
+            await Context.Interaction.SendFollowupMessageAsync(new InteractionMessageProperties
+            {
+                Embeds = [startEmbed],
+                Flags = MessageFlags.Ephemeral
+            });
             Task.Delay(1000).Wait();
-            await FollowupAsync(embed: questionEmbed.Build(), ephemeral: true);
+            await Context.Interaction.SendFollowupMessageAsync(new InteractionMessageProperties
+            {
+                Embeds = [questionEmbed],
+                Flags = MessageFlags.Ephemeral
+            });
 
-            SocketMessage? questionAnswer =
+            Message? questionAnswer =
                 await messageWaiter.WaitForMessageAsync(Context.User.Id, channel.Id, TimeSpan.FromMinutes(1));
 
             logger.LogInformation("[{Source}] Received question from user {User}: {Message}", "Bot",
@@ -48,7 +72,11 @@ public class CreateQuestionModule(
 
             if (questionAnswer == null)
             {
-                await FollowupAsync("No question provided. Please try again.", ephemeral: true);
+                await Context.Interaction.SendFollowupMessageAsync(new InteractionMessageProperties
+                {
+                    Content = "No question provided. Please try again.",
+                    Flags = MessageFlags.Ephemeral
+                });
                 return;
             }
 
@@ -63,25 +91,37 @@ public class CreateQuestionModule(
 
             if (createdQuestion is null)
             {
-                // A terminal failure already sent its own Followup message.
                 return;
             }
+            
+            
+            var resultEmbed = new EmbedProperties()
+            {
+                Title = "Question Created",
+                Description = $"Question: {createdQuestion.Question}\nOrder: {createdQuestion.QuestionOrder}",
+                Color = OrangeBotColors.Orange,
+                Footer = new EmbedFooterProperties()
+                {
+                    Text = "Question Creation Process"
+                }
+            };
 
-            var resultEmbed = new EmbedBuilder()
-                .AddField("Question Created",
-                    $"Question: {createdQuestion.Question}\nOrder: {createdQuestion.QuestionOrder}")
-                .WithFooter(footer => footer.WithText("Question Creation Process"))
-                .WithColor(OrangeBotColors.Orange);
-
-            await FollowupAsync(embed: resultEmbed.Build(), ephemeral: true);
+            await Context.Interaction.SendFollowupMessageAsync(new InteractionMessageProperties
+            {
+                Embeds = [resultEmbed],
+                Flags = MessageFlags.Ephemeral
+            });
         }
         catch (Exception e)
         {
             logger.LogError(e,
                 "[{Source}] An error occurred while processing the CreateQuestion command for user {User}", "Bot",
                 Context.User.Username);
-            await FollowupAsync("An error occurred while processing your request. Please try again later.",
-                ephemeral: true);
+            await Context.Interaction.SendFollowupMessageAsync(new InteractionMessageProperties
+            {
+                Content = "An error occurred while processing your request. Please try again later.",
+                Flags = MessageFlags.Ephemeral
+            });
         }
     }
 
@@ -89,7 +129,7 @@ public class CreateQuestionModule(
 
     private async Task<GuildQuestionCreateDto?> CreateQuestionWithOrderRetryAsync(
         GuildQuestionCreateDto guildQuestionCreateDto,
-        IChannel channel)
+        Channel channel)
     {
         for (int attempt = 1; attempt <= MaxOrderAttempts; attempt++)
         {
@@ -106,31 +146,41 @@ public class CreateQuestionModule(
             {
                 return await questionApiClient.CreateQuestionAsync(guildQuestionCreateDto);
             }
-            catch (ApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+            catch (ApiException ex) when (ex.StatusCode == HttpStatusCode.Conflict)
             {
                 logger.LogWarning("[{Source}] Conflict when creating question for user {User}: {Message}", "Bot",
                     Context.User.Username, ex.Message);
-                await FollowupAsync(
-                    $"A question with order {guildQuestionCreateDto.QuestionOrder} already exists. Please try again with a different order.",
-                    ephemeral: true);
+                await Context.Interaction.SendFollowupMessageAsync(new InteractionMessageProperties
+                {
+                    Content = $"A question with order {guildQuestionCreateDto.QuestionOrder} already exists. Please try again with a different order.",
+                    Flags = MessageFlags.Ephemeral
+                });
             }
             catch (ApiException ex)
             {
                 logger.LogError(ex, "[{Source}] Failed to create question for user {User}", "Bot",
                     Context.User.Username);
-                await FollowupAsync("Failed to create question. Please try again later.", ephemeral: true);
+                await Context.Interaction.SendFollowupMessageAsync(new InteractionMessageProperties
+                {
+                    Content = "Failed to create question. Please try again later.",
+                    Flags = MessageFlags.Ephemeral
+                });
                 return null;
             }
         }
 
-        await FollowupAsync("Too many conflicting orders. Please run the command again.", ephemeral: true);
+        await Context.Interaction.SendFollowupMessageAsync(new InteractionMessageProperties
+        {
+            Content = "Too many conflicting orders. Please run the command again.",
+            Flags = MessageFlags.Ephemeral
+        });
         return null;
     }
 
-    private async Task<int?> PromptForQuestionOrderAsync(IChannel channel, int takenNumber, int attempt)
+    private async Task<int?> PromptForQuestionOrderAsync(Channel channel, int takenNumber, int attempt)
     {
         await SendQuestionOrderPromptAndWaitForResponse(Context.User, channel);
-        SocketMessage? questionOrderAnswer =
+        Message? questionOrderAnswer =
             await messageWaiter.WaitForMessageAsync(Context.User.Id, channel.Id, TimeSpan.FromMinutes(1));
 
         if (questionOrderAnswer == null)
@@ -138,36 +188,58 @@ public class CreateQuestionModule(
             SendQuestionOrderErrorPromptAndWaitForResponse(Context.User, channel, takenNumber, attempt).Wait();
         }
 
-        if (!int.TryParse(questionOrderAnswer.Content, out int questionOrder))
+        if (int.TryParse(questionOrderAnswer.Content, out int questionOrder)) return questionOrder;
+        
+        await Context.Interaction.SendFollowupMessageAsync(new InteractionMessageProperties
         {
-            await FollowupAsync("Invalid question order provided. Please enter a valid number.", ephemeral: true);
-            return null;
-        }
+            Content = "Invalid question order provided. Please enter a valid number.",
+            Flags = MessageFlags.Ephemeral
+        });
+        return null;
 
-        return questionOrder;
     }
 
-    private async Task<IUserMessage?> SendQuestionOrderPromptAndWaitForResponse(SocketUser user, IChannel channel)
+    private async Task<Message?> SendQuestionOrderPromptAndWaitForResponse(User user, Channel channel)
     {
-        var questionOrderEmbed = new EmbedBuilder()
-            .AddField("Step 2: Enter the question order",
-                "Please type the order number for this question in this channel.")
-            .WithFooter(footer => footer.WithText("Question Creation Process"))
-            .WithColor(OrangeBotColors.Orange);
+        var questionOrderEmbed =  new EmbedProperties
+        {
+            Title = "Step 2: Enter the question order",
+            Description = "Please type the order number for this question in this channel.",
+            Color = OrangeBotColors.Orange,
+            Footer = new EmbedFooterProperties()
+            {
+                Text = "Question Creation Process"
+            }
+        };
 
-        return await FollowupAsync(embed: questionOrderEmbed.Build(), ephemeral: true);
+        await Context.Interaction.SendFollowupMessageAsync(new InteractionMessageProperties
+        {
+            Embeds = [questionOrderEmbed],
+            Flags = MessageFlags.Ephemeral
+        });
+        
+        return await messageWaiter.WaitForMessageAsync(user.Id, channel.Id, TimeSpan.FromMinutes(2));
     }
     
-    private async Task<IUserMessage?> SendQuestionOrderErrorPromptAndWaitForResponse(SocketUser user, IChannel channel, int takenNumber, int attempt)
+    private async Task<Message?> SendQuestionOrderErrorPromptAndWaitForResponse(User user, Channel channel, int takenNumber, int attempt)
     {
-        var questionOrderEmbed = new EmbedBuilder()
-            .AddField("An error occurred!",
-                "Please provide a valid question order number for this question in this channel.")
-            .AddField("Attempt",
-                $"Attempt {attempt} of {MaxOrderAttempts}. The order number {takenNumber} is already taken. Please provide a different order number.")
-            .WithFooter(footer => footer.WithText("Question Creation Process"))
-            .WithColor(OrangeBotColors.Orange);
+        var questionOrderEmbed =  new EmbedProperties
+        {
+            Title = "An error occurred!",
+            Description = $"Attempt {attempt} of {MaxOrderAttempts}. The order number {takenNumber} is already taken. Please provide a different order number.",
+            Color = OrangeBotColors.Orange,
+            Footer = new EmbedFooterProperties()
+            {
+                Text = "Question Creation Process"
+            }
+        };
 
-        return await FollowupAsync(embed: questionOrderEmbed.Build(), ephemeral: true);
+        await Context.Interaction.SendFollowupMessageAsync(new InteractionMessageProperties
+        {
+            Embeds = [questionOrderEmbed],
+            Flags = MessageFlags.Ephemeral
+        });
+        
+        return await messageWaiter.WaitForMessageAsync(user.Id, channel.Id, TimeSpan.FromMinutes(2));
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Discord.WebSocket;
+using NetCord.Gateway;
 
 namespace Orange.Bot.Interfaces;
 
@@ -20,7 +20,7 @@ public interface IMessageWaiter
     /// identified by <paramref name="channelId"/> within the specified <paramref name="timeout"/>,
     /// or <c>null</c> if no message is received within the timeout period or if the operation is canceled.
     /// </returns>
-    public Task<SocketMessage?> WaitForMessageAsync(
+    public Task<Message?> WaitForMessageAsync(
         ulong userId,
         ulong channelId,
         TimeSpan timeout,

@@ -1,66 +1,79 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Discord;
-using Discord.Interactions;
-using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
+using NetCord;
+using NetCord.Gateway;
+using NetCord.Rest;
+using NetCord.Services.ApplicationCommands;
 using Orange.Bot.Interfaces;
 
 namespace Orange.Bot.Commands;
 
-public class SendMessageModule(ILogger<SendMessageModule> logger, IMessageWaiter messageWaiter) : InteractionModuleBase<SocketInteractionContext>
+public class SendMessageModule(ILogger<SendMessageModule> logger, IMessageWaiter messageWaiter) : ApplicationCommandModule<SlashCommandContext>
 {
     [SlashCommand("sendmessage", "sends the user a DM with a message")]
     public async Task SendMessage()
     {
-
         logger.LogInformation("[{Source}] SendMessage command invoked by user {User}", "Bot", Context.User.Username);
 
-        await DeferAsync(ephemeral: true);
+        await Context.Interaction.SendResponseAsync(InteractionCallback.DeferredMessage(MessageFlags.Ephemeral));
         try
         {
-            IDMChannel? channel = null;
+            DMChannel? channel;
 
             try
             {
-                channel = await Context.User.CreateDMChannelAsync();
-                await channel.SendMessageAsync("Your Mom!");
+                channel = await Context.User.GetDMChannelAsync();
+                await channel.SendMessageAsync("Your Mom");
 
             }
             catch (Exception e)
             {
                 logger.LogError(e, "[{Source}] Failed to send DM to {User}", "Bot", Context.User.Username);
-                await FollowupAsync("Failed to send DM. Please check your privacy settings.", ephemeral: true);
+                await Context.Interaction.SendFollowupMessageAsync(new InteractionMessageProperties
+                {
+                    Content = "Failed to send DM. Please check your privacy settings.",
+                    Flags = MessageFlags.Ephemeral
+                });
                 return;
             }
 
-            await FollowupAsync("Check your dms!", ephemeral: true);
-
-            SocketMessage? userAnswer = await messageWaiter.WaitForMessageAsync(Context.User.Id, channel.Id, TimeSpan.FromMinutes(1));
-            logger.LogInformation("[{Source}] Received message from user {User}: {Message}", "Bot", Context.User.Username, userAnswer?.Content);
-
-            ISocketMessageChannel? invokationChannel = Context.Channel;
-
-            if (invokationChannel == null)
+            await Context.Interaction.SendFollowupMessageAsync(new InteractionMessageProperties
             {
-                logger.LogWarning("[{Source}] Invocation channel is null for user {User}", "Bot", Context.User.Username);
-                await FollowupAsync("Couldn't find the channel to post your reply in.", ephemeral: true);
-                return;
-            }
+                Content = "Check your DMs!",
+                Flags = MessageFlags.Ephemeral
+            });
+
+            Message? userAnswer = await messageWaiter.WaitForMessageAsync(Context.User.Id, channel.Id, TimeSpan.FromMinutes(1));
+            logger.LogInformation("[{Source}] Received message from user {User}: {Message}", "Bot", Context.User.Username, userAnswer?.Content);
+            
+
             if (userAnswer != null)
             {
-                await invokationChannel.SendMessageAsync($"User {Context.User.Username} responded with: {userAnswer.Content}");
+                await Context.Interaction.SendFollowupMessageAsync(new InteractionMessageProperties
+                {
+                    Content = $"{Context.User.Username} said: {userAnswer.Content}",
+                    Flags = MessageFlags.Ephemeral
+                });
             }
             else
             {
-                await invokationChannel.SendMessageAsync($"User {Context.User.Username} did not respond within the timeout period.");
+                await Context.Interaction.SendFollowupMessageAsync(new InteractionMessageProperties
+                {
+                    Content = "You did not respond in time.",
+                    Flags = MessageFlags.Ephemeral
+                });
             }
 
         }
         catch (Exception e)
         {
             logger.LogError(e, "[{Source}] An unexpected error occurred while processing the SendMessage command for user {User}", "Bot", Context.User.Username);
-            await FollowupAsync("An unexpected error occurred. Please try again later.", ephemeral: true);
+            await Context.Interaction.SendFollowupMessageAsync(new InteractionMessageProperties
+            {
+                Content = "An unexpected error occurred. Please try again later.",
+                Flags = MessageFlags.Ephemeral
+            });
         }
     }
 }
