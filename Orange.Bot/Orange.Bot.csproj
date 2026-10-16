@@ -8,10 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Seq" Version="13.5.3" />
-    <PackageReference Include="Discord.Net" Version="3.20.1" />
-    <PackageReference Include="Discord.Net.Interactions" Version="3.20.1" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.11" />
+    <PackageReference Include="Aspire.Seq" />
+    <PackageReference Include="Discord.Net" />
+    <PackageReference Include="Discord.Net.Interactions" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
   </ItemGroup>
 
   <ItemGroup>
